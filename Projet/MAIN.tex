@@ -1,4 +1,9 @@
-\documentclass[11pt,conference]{IEEEtran}
+\documentclass[11pt,twocolumn]{article}
+
+\usepackage[margin=2cm]{geometry}
+\usepackage{multibib}
+\newcites{track}{Selected publications by the team}
+\newcites{biblio}{References}
 
 \input{packages}
 
@@ -6,4 +11,54 @@
 
 \input{macros}
 
-\input{SECTIONS}
+
+
+\begin{document}
+
+\twocolumn[
+\centerline{\Large A Curry-Howard Perspective On Cyclic Proofs: Case for Support} \vspace{0.2cm}
+\centerline{James Brotherston (PI, UCL) and Amina Doumane}
+\vspace{0.8cm}
+]
+
+
+\begin{abstract}
+  \input{1-Abstract.tex}
+\end{abstract}
+
+\subsection*{1\quad Previous Research Track Record}
+
+{\bf James Brotherston} is a Reader in Logic and Computation in the Dept.\ of Computing at University College London, where he is a member of the Programming Principles, Logic and Verification (PPLV) research group.  Brotherston holds a PhD from the School of Informatics, University of Edinburgh 2006.  He was a postdoctoral researcher at Imperial College London from 2006--11 before taking up a lectureship at UCL in early 2012. He has held as PI grants worth more than $\pounds$1M in total to date, including an EPSRC Postdoctoral Fellowship (2008--11) and an EPSRC Career Acceleration Fellowship (2011--16). He is the author of 29 conference and journal papers, with an $h$-index of $17$.
+
+Brotherston's main research interests lie in mathematical logic and its application to computer science, especially in automated program verification. He is especially well known for his pioneering work on \emph{cyclic proof} (see e.g.~\citetrack{BS11,BBC08,Bro05}) and also for his work in \emph{separation logic} (see e.g.~\citetrack{BK14,BV14}).  \\
+
+\noindent {\bf Amina Doumane} is \ldots (INSERT BIO)
+
+\paragraph{Relevant previous work.}
+The investigators have contributed significantly to \ldots 
+
+\paragraph{Host organisation.}
+The UCL Dept.\ of Computer Science is well known as a leading centre for computer science research in the UK, and was ranked first place of 89 universities for Computer Science in the 2014 REF. The PPLV group, headed by Prof. David Pym, consists of six full-time faculty members, including Brotherston, plus a substantial number of postdocs, PhD students and part-time faculty. The group enjoys close links with Facebook (through Peter O'Hearn, part-time professor and Engineering Manager at Facebook) and Amazon (through Byron Cook, part-time professor and Head of AWS Security Automated Reasoning Group at Amazon) as well as the recently founded Turing Institute (through David Pym, ATI University Liaison Director for UCL) and numerous collaborative links with researchers at other universities.
+
+\begingroup
+\footnotesize
+\bibliographystyletrack{alpha}
+\bibliographytrack{track}
+\endgroup
+
+%\newpage
+
+%\input{2-PreviousResearch}
+
+\newpage
+\input{3-ProposedResearch}
+
+
+\begingroup
+\footnotesize
+\bibliographystylebiblio{abbrv}
+\bibliographybiblio{biblio}
+\endgroup
+
+\end{document}
+

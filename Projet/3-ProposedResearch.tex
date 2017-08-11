@@ -4,7 +4,7 @@
 
 \textbf{The Curry-Howard correspondence.}
 Traditionally, proofs are a tool used to establish the validity
-of mathematical statements. 
+of mathematical statements.
 %
 Proofs  have been generally  compared at an aestethic/concision level, but
 were not considered as a proper object of study. The focus was in provability
@@ -13,7 +13,7 @@ were not considered as a proper object of study. The focus was in provability
 This situation have changed in the 60's, where we descovered a deep link between proofs and programs. This link is known as the \textit{Curry-Howard Correspondence}.
 %
 \mytodo{Recall this correspondence.}
- 
+
 
   Over time, the meaning of the Curry-Howard correspondence has evolved from
   the simple observation of an isomorphism between an existing
@@ -22,14 +22,14 @@ Indeed, one can either start from a typed programming language and extract its i
 Conversely, one could start from a known proof system and try to understand its computational content
 in order to design its
   corresponding programming language,
-  this is for instance how a number of calculi were  born~\cite{Parigot92,CurienH00, Munch09Foc}.
+  this is for instance how a number of calculi were  born~\citebiblio{Parigot92,CurienH00, Munch09Foc}.
 
   Curry-Howard was also productive in renewing questions related to the
-  semantics of logic, putting an emphasis on the semantics of proofs, in contrast to tranditional thruth or provability semantics. 
-    
-\bigskip 
+  semantics of logic, putting an emphasis on the semantics of proofs, in contrast to tranditional thruth or provability semantics.
+
+\bigskip
   \textbf{Fixed points logics} are those logics containing two special connectives: the connective $\mu$ and its dual $\nu$. A formula of the form $\mu X. F$ (resp. $\nu X. F$) can be understood as the “least (resp. greatest) fixed points of the operator  $X\mapsto F(X)$”.
-  
+
 Least and greatest fixed points allow to treat in a direct, generic and intuitive way data (natural numbers, lists, etc) and co-data (streams, infinite trees, etc). The least fixed point operator $\mu$ allows to define
 finite data types such as natural numbers,  lists, finite trees, etc.
 Dually, the greatest fixed point operator allow to
@@ -40,7 +40,7 @@ define infinite data types (called co-data), such as streams, infinite trees, et
 \textbf{Proof systems for logics with fixed points.}
 
 There are two main families of proof systems with fixed points: finitary proof
-systems with explicit rules of (co)induction and infinitary proof systems. 
+systems with explicit rules of (co)induction and infinitary proof systems.
 
 \begin{itemize}
 \item{Finitary proof systems.} In these proof systems, the induction  principle
@@ -103,12 +103,12 @@ $$
 $$
 \medskip
 The fact that the cut rule is unavoidable (either in an explicit or a hidden way) means that proof systems with explicit rules of induction are fundamentally not suited
-to proof-search, and that there is very little we can do to fix that. 
+to proof-search, and that there is very little we can do to fix that.
 An other drawback of proofs using explicit induction  is that their computational meaning is usually
 not explicit: it is hard to tell what
 such proofs compute, when two proofs compute the same function, etc.
 
-\item{Infinitary proof systems.} These systems are obtained by using, 
+\item{Infinitary proof systems.} These systems are obtained by using,
 instead of the Park's rules $\rnur$ and $\rmul$, the following
 unfolding rules:
 $$\begin{prooftree}
@@ -148,14 +148,14 @@ science use, as its proofs can be finitely represented and manipulated.
 Infinitary and circular  proof systems have existed for a long time, but in the shadows, and more as technical
 tools than as proper proof systems. Indeed, their infinitary nature makes them suitable intermediary objects between the syntax and the semantics, so that we usually find them in
 completeness proofs. This is the case, for instance, with the
-\mucalculus \textbf{refutations} of Niwinski and Walukiewicz~\cite{NiwinskiW96}, which are used as an intermediary proof system in Walukiewicz's proof of completeness of the \mucalculus with respect to Kozen's
-axiomatization~\cite{Waluk95}.
+\mucalculus \textbf{refutations} of Niwinski and Walukiewicz~\citebiblio{NiwinskiW96}, which are used as an intermediary proof system in Walukiewicz's proof of completeness of the \mucalculus with respect to Kozen's
+axiomatization~\citebiblio{Waluk95}.
 
-In the last decades, infinitary proof systems have started to come out from the shadows and have begun to be considered as proper proofs (Dam and Gurov~\cite{DamG02},  Dax \textit{et al.}~\cite{dhl06}. Santocanale ~\cite{santoCircularProofs}. Brotherston~\cite{}, QuodLibet~\cite{AvenhausKSW03}, $\dots$)
+In the last decades, infinitary proof systems have started to come out from the shadows and have begun to be considered as proper proofs (Dam and Gurov~\citebiblio{DamG02},  Dax \textit{et al.}~\citebiblio{dhl06}. Santocanale ~\citebiblio{santoCircularProofs}. Brotherston~\citebiblio{}, QuodLibet~\citebiblio{AvenhausKSW03}, $\dots$)
 
 \medskip
 Despite their compelling interest,
-few proof-theoretical investigations have been done about infinitary proof theory (cut-elimination, focalization, $\dots$). 
+few proof-theoretical investigations have been done about infinitary proof theory (cut-elimination, focalization, $\dots$).
 
 
 
@@ -174,7 +174,7 @@ few proof-theoretical investigations have been done about infinitary proof theor
   \bigskip
 The use of circular proofs as type systems represents a promising new
 method of writing (co)inductive programs, at least from the three following perspectives:
-  
+
 \begin{enumerate}
 \item The programs are easier to write, more user-friendly. Indeed, there are no invariants to guess.
 \item It is known that every finitary proof can be transformed into a circular one, but the converse is still an open question (cf Task B).
@@ -183,11 +183,11 @@ Circular proofs may then contain ``more proofs'' and using circular type systems
   \mytodo{Add an example in the background section to argument that?}
 \end{enumerate}
 
-  
+
 \item \textbf{Short/Mid-term objective:} Before realizing this long term objective, one needs to ensure that the circular type sytems
   enjoy the usual fundamental properties, normalization for instance.
 
-  A step in this direction has been done by the second author and \textit{al.},  who showed cut-elimination for circular proofs in the setting of sequent calculus~\cite{}. It has been shown initially for multiplicative addivite linear-logic \MALL, but have been extended to other logics (\LL, \LK, \LJ).
+  A step in this direction has been done by the second author and \textit{al.},  who showed cut-elimination for circular proofs in the setting of sequent calculus~\citebiblio{}. It has been shown initially for multiplicative addivite linear-logic \MALL, but have been extended to other logics (\LL, \LK, \LJ).
 
 
   The translation between sequent calculus and
@@ -196,7 +196,7 @@ setting, this is not the case anymore.
 
 
  Since circular typing systems  are usually in correspondence with the
-formalism of natural deduction rather than with sequent calculus one, 
+formalism of natural deduction rather than with sequent calculus one,
 showing their normalization is not a corrolary of the second author's result.
 Thus we have for this direction two short/mid-term objectives:
   \begin{enumerate}
@@ -214,7 +214,7 @@ Thus we have for this direction two short/mid-term objectives:
 The question of relating the finitary proof systems with explicit (co)induction rules and the circular proof systems is a hard question.
 
 It has been already set as a conjecture in similar settings, for instance
-by Brotherston and Simpson~\cite{BrotherstonS07} in the framework of classical first-order logic with definitions.  
+by Brotherston and Simpson~\citebiblio{BrotherstonS07} in the framework of classical first-order logic with definitions.
 
 
 We can ask this question at two levels: at the level of \textbf{provability}
@@ -231,7 +231,7 @@ let us set up some notations.
   infinite derivations satisfying the validity condition.
 
   We denote by \muSo the circular proof system obtained by restricting
-  the proofs of \muSi to the regular ones. 
+  the proofs of \muSi to the regular ones.
 \end{notation}
 
 \bigskip
@@ -241,27 +241,27 @@ For this task, we have two main research directions:
 For a given proof system \Sys, does the proof systems \muS and \muSo prove the same theorems?
 
 \medskip
-In ~\cite{DoumanePhD}, this question has been partially answered by showing that every provable sequent in \muS is also provable in \muSo. The converse in more difficult, and ~\cite{DoumanePhD} provide only a sufficient condition on the
+In ~\citebiblio{DoumanePhD}, this question has been partially answered by showing that every provable sequent in \muS is also provable in \muSo. The converse in more difficult, and ~\citebiblio{DoumanePhD} provide only a sufficient condition on the
 proof system \muS and \muSo (the invariant property) and a condition on the circular proofs to be translated (the translatability criterion) which guarantees that they can be indeed transformed into finitary proofs.
 
 \bigskip
 If the answer to this problem happens to be positive,  we see two ways to proceed:
 \begin{itemize}
 \item Either by finding a semantics of formulas, common to both \muS and \muSo. The idea is to show soundness for \muSo (that is, if a formula
-  is provable in \muS then it is valid \wrt this semantics) and completeness for \muS (that is, if a formula is valid then it is provable in \muSo). This is the approach taken by Brotherstone and Simpson~\cite{BrotherstonS07}.
-\item Or by using combinatorial techniques, that is by showing a translation procedure that transforms \muSo proofs into \muS ones. This is the approach adopted in \cite{DoumanePhD}. It has the advantage of being constructive by essence. 
+  is provable in \muS then it is valid \wrt this semantics) and completeness for \muS (that is, if a formula is valid then it is provable in \muSo). This is the approach taken by Brotherstone and Simpson~\citebiblio{BrotherstonS07}.
+\item Or by using combinatorial techniques, that is by showing a translation procedure that transforms \muSo proofs into \muS ones. This is the approach adopted in \citebiblio{DoumanePhD}. It has the advantage of being constructive by essence.
 \end{itemize}
 
 
-Recently, the conjecture of Brotherston and Simpson has been 
- been answered by Berard and Tatsuta~\cite{BerardiT17} and by Alex Simpson~\cite{Simpson2017}.
+Recently, the conjecture of Brotherston and Simpson has been
+ been answered by Berard and Tatsuta~\citebiblio{BerardiT17} and by Alex Simpson~\citebiblio{Simpson2017}.
 
 
 
 \item \textbf{Relating the finitary and the circular proof systems at the level of computational power:}
-For a given proof system \Sys, do the proof systems \muS and \muSo denote the same set of programs. 
+For a given proof system \Sys, do the proof systems \muS and \muSo denote the same set of programs.
 
-If the answer happens to be positive, a way to proceed is by using \textbf{proof semantics}. 
+If the answer happens to be positive, a way to proceed is by using \textbf{proof semantics}.
 For that, we have to find a domain of interpretation for proofs, common to both \muS and \muSo.
 If we denote by $\interp{\pi}$, the interpretation of a \muS or a \muSo proof
 $\pi$, this problem can be reformulated as follows:
