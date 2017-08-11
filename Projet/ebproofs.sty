@@ -1,0 +1,632 @@
+% This package contains macros for typesetting proof trees.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ebproof}[2013/04/06 EB's proof trees]
+
+% The structure is inspired by the bussproofs package. In particular, proofs
+% are built using statements that operate on a stack of sub-proofs, in postfix
+% notation.The package provides an environment prooftree that is used as
+%
+%   \begin{prooftree}[OPTIONS]
+%     STATEMENTS
+%   \end{prooftree}
+%
+% This environment can be used either in math mode or in text mode. It
+% produces a proof tree at the current position in the text flow. The package
+% also provides a starred variant |prooftree*| that typesets the proof
+% centered on a line of its own; it is essentially equivalent to wrapping the
+% |prooftree| environment inside a |center| environment.
+%
+% The basic statements for building proofs are:
+%
+%   \Hypo[OPTIONS]{TEXT}
+%
+%     Make a hypothesis, i.e. a leaf in the proof tree, with no line above.
+%
+%   \Infer[OPTIONS]{ARITY}[LABEL]{TEXT}
+%
+%     Build an inference step. The ARITY is the number of sub-proofs, it may
+%     be any number including 0 (in this case there will be a line above the
+%     conclusion but no sub-proof). If LABEL is present, it is used as the
+%     label on the right of the inference line. The TEXT is the conclusion of
+%     the rule.
+%
+%   \Ellipsis{LABEL}{TEXT}
+%
+%     Typeset vertical dots, with a label on the right, and a new conclusion.
+%     No inference lines are inserted.
+%
+% Each proof tree has a vertical axis, used for alignment of successive steps.
+% The position of the axis is deduced from the text of the conclusion in the
+% above commands. If TEXT contains the alignment character & then the axis is
+% set at that position position, otherwise the axis is set at the center of
+% the conclusion text. For instance, successive statements like
+% |\Infer1{\Gamma&\vdash\Delta}| will produce conclusions aligned on the
+% |\vdash| symbol.
+%
+% The formatting of trees, conclusion texts and inference rules is affected by
+% the following options, which can be set for a whole tree or a single
+% statement, or event globally using |\setkeys{ebproof}{OPTIONS}|:
+%
+% General shape:
+%
+%   updown=BOOLEAN
+%
+%     If set to true, the proofs are written upside down, with the conclusion
+%     of rules is set above and the premisses below.
+%
+%   center=BOOLEAN
+%
+%     If set to true, the tree produced by the |prooftree| environment will be
+%     vertically centered around the text line. If set to false, the base line
+%     of the tree will be the base line of the conclusion. The default value
+%     is true.
+%
+% Format of inference rules:
+%
+%   rulestyle=NAME
+%
+%     Defines the style of rules, among the following choices:
+%       - none : no inference line at all
+%       - simple : a single line (this is the default style)
+%       - double : two lines
+%       - dashed : a dashed line
+%
+%   leftlabel=TEXT
+%   rightlabel=TEXT
+%
+%     The text to use as the labels of the rules, on the left and on the right
+%     of the inference line. Using the second optional argument in |\Infer| is
+%     equivalent to setting the |rightlabel| option with the value of that
+%     argument.
+%
+%   template=MACRO
+%   lefttemplate=MACRO
+%   righttemplate=MACRO
+%
+%     Defines how conclusions are formatted. The macros are arbitrary TeX
+%     code, composed in horizontal mode, with the macro argument |#1| standing
+%     for the actual text passed to the |\Hypo| and |\Infer| statements. The
+%     |template| value is used for conclusions with no alignment mark. The
+%     |lefttemplate| and |righttemplate| values are used on the left and right
+%     side of the alignment mark when it is present. The default value for
+%     |template| is simply |$#1$|, so that conclusions are set in math mode.
+%     The default values for |lefttemplate| and |righttemplate| are similar,
+%     with spacing assuming that a relation symbol is put near the alignment
+%     mark, so that |\Infer1{AÂ &\vdash B}| is spaced correctly.
+%
+%   leftlabeltemplate=MACRO
+%   rightlabeltemplate=MACRO
+%
+%     These macros are used to typeset the text of labels on the left and
+%     right of inference lines. The default values are |#1| so that labels are
+%     set in plain text mode.
+%
+% Dimensions:
+%
+%   hsep         the horizontal separation between sub-proofs in an inference
+%   rulemargin   the spacing above and below inference lines
+%   rulesep      the spacing between lines in double-line inferences
+%   thickness    the thickness of inference lines
+%   labelsep     the spacing between an inference lines and its labels
+%
+% The following additional statements may be used to affect the format of the
+% last proof tree on the stack:
+%
+%   \Alter{COMMANDS}
+%
+%     Modify the proof with arbitrary commands, assuming that these commands
+%     do not affect the size. A typical use is |\Alter{\color{red}}|, this
+%     will typeset the subproof in red.
+%
+%   \Delims{LEFT}{RIGHT}
+%
+%     Put left and right delimiters around the whole sub-proof, without
+%     changing the alignment (the spacing is affected by the delimiters,
+%     however). The LEFT text must contain an open occurrence of |\left|Â and
+%     the RIGHT text must contain an occurrence of matching occurrenc of
+%     |\right|. For instance, |\Delims{\left(}{\right)}| will put the
+%     sub-proof between parentheses.
+%
+%-----------------------------------------------------------------------------
+
+% The |xkeyval| package is used for the parameters in proof construction.
+% The |ifthen| package is used for some tests.
+
+\RequirePackage{xkeyval}
+\RequirePackage{ifthen}
+
+%%% Registers
+
+\newdimen\ebproof@hsep
+\newdimen\ebproof@rulemargin
+\newdimen\ebproof@rulesep
+\newdimen\ebproof@thickness
+\newdimen\ebproof@labelsep
+\newbox\ebproof@leftbox
+\newbox\ebproof@rightbox
+
+%%% Parameters
+
+\define@key{ebproof}{hsep}{\setlength\ebproof@hsep{#1}}
+\define@key{ebproof}{rulemargin}{\setlength\ebproof@rulemargin{#1}}
+\define@key{ebproof}{rulesep}{\setlength\ebproof@rulesep{#1}}
+\define@key{ebproof}{thickness}{\setlength\ebproof@thickness{#1}}
+\define@key{ebproof}{labelsep}{\setlength\ebproof@labelsep{#1}}
+\define@key{ebproof}{rulestyle}{%
+  \expandafter\let\expandafter\ebproof@rule@do\csname ebproof@rule@#1\endcsname}
+\define@boolkey{ebproof}{updown}[true]{}
+\define@key{ebproof}{template}{\def\ebproof@template##1{#1}}
+\define@key{ebproof}{lefttemplate}{\def\ebproof@lefttemplate##1{#1}}
+\define@key{ebproof}{righttemplate}{\def\ebproof@righttemplate##1{#1}}
+\define@key{ebproof}{leftlabeltemplate}{\def\ebproof@leftlabeltemplate##1{#1}}
+\define@key{ebproof}{rightlabeltemplate}{\def\ebproof@rightlabeltemplate##1{#1}}
+\define@key{ebproof}{leftlabel}{%
+  \def\ebproof@setleftlabel{%
+    \setbox\ebproof@leftbox=\hbox{\ebproof@leftlabeltemplate{#1}}}}
+\define@key{ebproof}{rightlabel}{%
+  \def\ebproof@setrightlabel{%
+    \setbox\ebproof@rightbox=\hbox{\ebproof@rightlabeltemplate{#1}}}}
+\define@boolkey{ebproof}{center}{}
+
+% Default values:
+
+\ebproof@hsep=1.5em
+\ebproof@rulemargin=3pt
+\ebproof@rulesep=2pt
+\ebproof@thickness=.4pt
+\ebproof@labelsep=0.5em
+\KV@ebproof@updownfalse
+\def\ebproof@template#1{$#1$}
+\def\ebproof@lefttemplate#1{$#1\mathrel{}$}
+\def\ebproof@righttemplate#1{$\mathrel{}#1$}
+\def\ebproof@leftlabeltemplate#1{#1}
+\def\ebproof@rightlabeltemplate#1{#1}
+\def\ebproof@setleftlabel{\setbox\ebproof@leftbox=\box\voidb@x}
+\def\ebproof@setrightlabel{\setbox\ebproof@rightbox=\box\voidb@x}
+\KV@ebproof@centertrue
+
+%%% Storage
+
+% Proof trees are represented as a data structure that consists of the
+% following data:
+%
+% - box :   the tree itself, as a box, with the base line on that of
+%           the conclusion
+% - left :  the distance from the left of the box to the left of the
+%           conclusion
+% - right : the distance from the right of the box to the right of the
+%           conclusion
+% - axis :  the distance from the left of the box to the vertical axis
+%           of the conclusion
+%
+% TeX does not actually provide data structures, so we have to encode things.
+% First we provide local allocators, for temporary allocation of registers in
+% a group. Dimensions are initialized to 0pt.
+
+\newcount\ebproof@localdimens
+\ebproof@localdimens=1
+\def\ebproof@localdimen#1{%
+  \advance\ebproof@localdimens1\relax
+  \expandafter\dimendef\csname#1\endcsname\ebproof@localdimens
+  \csname#1\endcsname=0pt\relax}
+
+% For boxes, the allocator must be used as
+%
+%   \ebproof@localbox{NAME}=\hbox{...}
+%
+% in order to set the value of the box.
+
+\newcount\ebproof@localboxes
+\ebproof@localboxes=1
+\def\ebproof@localbox#1{%
+  \advance\ebproof@localboxes1\relax
+  \expandafter\chardef\csname#1\endcsname\ebproof@localboxes
+  \setbox\csname#1\endcsname}
+
+% From this we deduce an allocator for data structures. This allocator
+% receives a base name |A| and defines the registers |\A@box|, |\A@left|,
+% |\A@right| and |\A@axis|. The macro is used like |\ebproof@localbox|, by
+% providing a value for the box.
+
+\def\ebproof@alloc#1{%
+  \ebproof@localdimen{#1@left}%
+  \ebproof@localdimen{#1@right}%
+  \ebproof@localdimen{#1@axis}%
+  \ebproof@localbox{#1@box}}
+
+% Logically, such structures are stored on a stack. However, TeX does not
+% provide data structures, so we encode them using what we actually have. A
+% stack for boxes is implemented using a global hbox |\ebproof@box@stack| that
+% contains all the boxes successively, and the |\lastbox| primitive allows us
+% to pop elements from there. A macro |\ebproof@stack| is used to store the
+% dimensions textually: the empty stack is an empty macro, and a non-empty
+% stack is represented as |{left}{right}{axis}{tail}|. We maintain a counter
+% |\ebproof@level| with the number of elements on the stack, for consistency
+% checks.
+
+\newcount\ebproof@level
+\newbox\ebproof@box@stack
+\newbox\ebproof@box@temp
+
+% Clear the stack.
+
+\def\ebproof@clear{%
+  \global\ebproof@level=0%
+  \global\setbox\ebproof@box@stack=\box\voidb@x%
+  \gdef\ebproof@stack{}}
+
+% Push an allocated structure (by name) on the stack.
+
+\def\ebproof@push#1{%
+  \global\advance\ebproof@level1\relax
+  \global\setbox\ebproof@box@stack=\hbox{%
+    \unhbox\ebproof@box@stack\copy\csname#1@box\endcsname}%
+  \xdef\ebproof@stack{%
+    {\the\csname#1@left\endcsname}%
+    {\the\csname#1@right\endcsname}%
+    {\the\csname#1@axis\endcsname}%
+    {\ebproof@stack}}}
+
+% Allocate a structure and pop its value from the top of the stack.
+
+\def\ebproof@pop#1{%
+  \ifnum\ebproof@level>0\relax
+    \global\advance\ebproof@level-1\relax
+    \global\setbox\ebproof@box@stack=\hbox{%
+      \unhbox\ebproof@box@stack
+      \global\setbox\ebproof@box@temp=\lastbox}%
+    \ebproof@alloc{#1}=\box\ebproof@box@temp%
+    \begingroup\def\pop##1##2##3##4{\endgroup%
+      \csname#1@left\endcsname=##1\relax
+      \csname#1@right\endcsname=##2\relax
+      \csname#1@axis\endcsname=##3\relax
+      \gdef\ebproof@stack{##4}}%
+    \expandafter\pop\ebproof@stack
+  \else
+    \PackageError{ebproof}{%
+      Missing premiss in a proof tree}{}%
+    \ebproof@alloc{#1}=\box\voidb@x%
+  \fi}
+
+
+%%% Making boxes
+
+% Push a box with the axis in the middle.
+
+\def\ebproof@pushsimple#1{%
+  \begingroup
+  \ebproof@alloc{A}=\hbox{#1}%
+  \A@axis=.5\wd\A@box
+  \ebproof@push{A}%
+  \endgroup}
+
+% Push a box made of two halves, with the axis between the halves.
+
+\def\ebproof@pushsplit#1#2{%
+  \begingroup
+  \ebproof@alloc{A}=\hbox{#1}%
+  \A@axis=\wd\A@box
+  \setbox\A@box=\hbox{\unhbox\A@box#2}%
+  \ebproof@push{A}%
+  \endgroup}
+
+% Join horizontally the two elements at the top of the stack.
+
+\def\ebproof@joinh{%
+  \begingroup
+  \ebproof@pop{A}%
+  \ebproof@pop{B}%
+  \ebproof@alloc{C}=\hbox{\box\B@box \kern\ebproof@hsep \box\A@box}%
+  \C@left=\B@left
+  \C@right=\A@right
+  \C@axis=\wd\C@box
+  \advance\C@axis\B@left
+  \advance\C@axis-\A@right
+  \divide\C@axis2\relax
+  \ebproof@push{C}%
+  \endgroup}
+
+% An $n$-ary version of the horizontal join.
+
+\def\ebproof@joinh@multi#1{%
+  \begingroup
+  \countdef\c=1
+  \c=#1\relax%
+  \ifnum\c=0
+    \ebproof@alloc{X}=\hbox{}%
+    \ebproof@push{X}%
+  \else
+    \ebproof@joinh@loop
+  \fi
+  \endgroup}
+\def\ebproof@joinh@loop{%
+  \ifnum\c>1
+    \ebproof@joinh
+    \advance\c-1
+    \expandafter\ebproof@joinh@loop
+  \fi}
+
+% Append the last element to the right of the previous one, without changing
+% its alignment.
+
+\def\ebproof@joinright{%
+  \begingroup
+  \ebproof@pop{A}%
+  \ebproof@pop{B}%
+  \ebproof@alloc{C}=\hbox{\box\B@box \kern\ebproof@hsep \copy\A@box}%
+  \C@left=\B@left
+  \C@right=\B@right
+  \advance\C@right\wd\A@box
+  \advance\C@right\ebproof@hsep
+  \ebproof@push{C}%
+  \endgroup}
+
+% Join vertically the two elements at the top of the stack, with a horizontal
+% rule of the appropriate size.
+
+\def\ebproof@joinv{%
+  \begingroup
+  \ebproof@setleftlabel
+  \ebproof@setrightlabel
+  \ebproof@pop{A}%
+  \ebproof@pop{B}%
+  %
+  \ebproof@alloc{C}=\box\voidb@x%
+  \ebproof@localdimen{A@shift}%
+  \ebproof@localdimen{B@shift}%
+  \ebproof@localdimen{R@shift}%
+  \ebproof@localdimen{R@raise}%
+  \ebproof@localdimen{R@width}%
+  \ebproof@localdimen{C@width}%
+  \ebproof@localdimen{tmp}%
+  %
+  % The placement of the boxes and the axis of the result
+  \ifdim\A@axis>\B@axis
+    \A@shift=0pt%
+    \B@shift=\A@axis
+    \advance\B@shift-\B@axis
+    \C@axis=\A@axis
+  \else
+    \A@shift=\B@axis
+    \advance\A@shift-\A@axis
+    \B@shift=0pt%
+    \C@axis=\B@axis
+  \fi
+  % The paddings of the result
+  \C@left=\A@left
+  \advance\C@left\A@shift
+  \C@right=\A@right
+  \tmp=\wd\B@box
+  \advance\tmp\B@shift
+  \advance\tmp-\wd\A@box
+  \advance\tmp-\A@shift
+  \ifdim\tmp>0pt%
+    \C@width=\wd\B@box
+    \advance\C@width\B@shift
+    \advance\C@right\tmp
+  \else
+    \C@width=\wd\A@box
+    \advance\C@width\A@shift
+  \fi
+  % The position of the rule
+  \R@shift=\A@left
+  \advance\R@shift\A@shift
+  \tmp=\B@left
+  \advance\tmp\B@shift
+  \ifdim\R@shift>\tmp
+    \R@shift=\tmp
+  \fi
+  % The width of the rule
+  \R@width=\wd\A@box
+  \advance\R@width\A@shift
+  \advance\R@width-\A@right
+  \tmp=\wd\B@box
+  \advance\tmp\B@shift
+  \advance\tmp-\B@right
+  \ifdim\tmp>\R@width
+    \R@width=\tmp
+  \fi
+  \advance\R@width-\R@shift
+  % Make the rule box
+  \ebproof@localbox{R@box}=\vbox{%
+    \hsize=\R@width
+    \hrule width \R@width height 0pt\relax
+    \ebproof@rule@do}%
+  % Shift things if the left box is wider than |\R@shift|
+  \ifvoid\ebproof@leftbox\else
+    \tmp=\wd\ebproof@leftbox
+    \advance\tmp\ebproof@labelsep
+    \ifdim\tmp>\R@shift
+      \advance\tmp-\R@shift
+      \advance\A@shift\tmp
+      \advance\B@shift\tmp
+      \advance\C@left\tmp
+      \advance\C@axis\tmp
+      \advance\C@width\tmp
+      \R@shift=0pt\relax
+    \else
+      \advance\R@shift-\tmp
+    \fi
+  \fi
+  % Compute how the rule box must be shifted so that labels are aligned
+  \ebproof@localbox{RC@box}=\hbox{$\vcenter{\copy\R@box}$}%
+  \R@raise=\ht\R@box
+  \advance\R@raise-\ht\RC@box
+  % Make the complete rule box
+  \setbox\RC@box=\hbox{%
+    \ifvoid\ebproof@leftbox\else
+      \copy\ebproof@leftbox
+      \kern\ebproof@labelsep
+    \fi
+    \box\RC@box
+    \ifvoid\ebproof@rightbox\else
+      \kern\ebproof@labelsep
+      \copy\ebproof@rightbox
+    \fi}
+  % Adapt the dimensions on the right if the total rule width is too large
+  \tmp=\wd\RC@box
+  \advance\tmp\R@shift
+  \ifdim\tmp>\C@width
+    \advance\tmp-\C@width
+    \advance\C@right\tmp
+  \fi
+  % Cancel the labels' height and depth
+  \setbox\RC@box=\hbox{\raise\R@raise\box\RC@box}
+  \ht\RC@box=\ht\R@box
+  \dp\RC@box=\dp\R@box
+  % Make the box
+  \ifKV@ebproof@updown
+    \setbox\C@box=\vtop{%
+      \moveright\A@shift\box\A@box
+      \hrule height 0pt
+      \moveright\R@shift\box\RC@box%
+      \hrule height 0pt
+      \moveright\B@shift\box\B@box}%
+  \else
+    \setbox\C@box=\vbox{%
+      \moveright\B@shift\box\B@box
+      \hrule height 0pt
+      \moveright\R@shift\box\RC@box%
+      \hrule height 0pt
+      \moveright\A@shift\box\A@box}%
+  \fi
+  \ebproof@push{C}%
+  \endgroup}
+% To put a simple rule in a vertical join
+\let\ebproof@rule@none=\relax
+\def\ebproof@rule@simple{%
+  \kern\ebproof@rulemargin
+  \hrule height \ebproof@thickness\relax
+  \kern\ebproof@rulemargin
+  }
+\let\ebproof@rule@do=\ebproof@rule@simple
+\def\ebproof@rule@double{%
+  \kern\ebproof@rulemargin
+  \hrule height \ebproof@thickness
+  \kern\ebproof@rulesep
+  \hrule height \ebproof@thickness
+  \kern\ebproof@rulemargin}
+\def\ebproof@rule@dashed{%
+  \kern\ebproof@rulemargin%
+  \hbox to \hsize{%
+    \kern-1pt%
+    \leaders\hbox{\kern1pt%
+      \vrule height \ebproof@thickness width 5\ebproof@thickness%
+      \kern1pt}\hfill
+    \kern-1pt}%
+  \kern\ebproof@rulemargin}
+
+%%% Modifying boxes
+
+% Alter a proof with a command that does not affect the size. Typically useful
+% with |\color| commands.
+
+\def\ebproof@alter#1{%
+  \begingroup
+  \ebproof@pop{A}%
+  \setbox\A@box=\hbox{{#1\box\A@box}}%
+  \ebproof@push{A}%
+  \endgroup}
+
+% Insert |\left| and |\right| delimiters without changing the alignment
+
+\def\ebproof@delims#1#2{%
+  \begingroup
+  \ebproof@pop{TREE}%
+  \ebproof@localbox{@SHIFTED}=%
+    \hbox{$\vcenter{\copy\TREE@box}$}%
+  \ebproof@localbox{@LEFT}=%
+    \hbox{$#1\vrule height \ht\@SHIFTED depth \dp\@SHIFTED width 0pt\right.$}%
+  \ebproof@localbox{@RIGHT}=%
+    \hbox{$\left.\vrule height \ht\@SHIFTED depth \dp\@SHIFTED width 0pt#2$}%
+  \ebproof@localdimen{dy}
+  \dy=\dp\@SHIFTED
+  \advance\dy-\dp\TREE@box
+  \ebproof@alloc{A}=%
+    \hbox{\raise\dy\hbox{\copy\@LEFT\box\@SHIFTED\copy\@RIGHT}}%
+  \A@left=\wd\@LEFT \advance\A@left\TREE@left
+  \A@right=\wd\@RIGHT \advance\A@right\TREE@right
+  \A@axis=\wd\@LEFT \advance\A@axis\TREE@axis
+  \ebproof@push{A}%
+  \endgroup}
+
+%%% High-level commands
+
+% Push a box with default formatting, using explicit alignment if the code
+% contains a |&| character
+
+\def\ebproof@hypo@parse#1&#2&#3\ebproof@hypo@stop{
+  \ifthenelse{\equal{#3}{}}%
+    {\ebproof@pushsimple{\ebproof@template{#1}}}%
+    {\ebproof@pushsplit
+      {\ebproof@lefttemplate{#1}}%
+      {\ebproof@righttemplate{#2}}}}
+
+\newcommand\ebproof@hypo[2][]{%
+  {\setkeys{ebproof}{#1}\ebproof@hypo@parse#2&&\ebproof@hypo@stop}}
+
+% Build a n-ary rule
+
+\def\ebproof@infer{%
+  \@ifnextchar[{\ebproof@infer@}{\ebproof@infer@[]}}
+\def\ebproof@infer@[#1]#2{%
+  \@ifnextchar[{\ebproof@infer@@{#1}{#2}}{\ebproof@infer@@{#1}{#2}[]}}
+\def\ebproof@infer@@#1#2[#3]#4{%
+  \ebproof@joinh@multi{#2}%
+  \ebproof@hypo{#4}%
+  {\setkeys{ebproof}{#1}%
+   \ifthenelse{\equal{#3}{}}{}{\setkeys{ebproof}{rightlabel={#3}}}%
+   \ebproof@joinv}}
+
+% Ellipsis with vertical dots
+
+\def\ebproof@ellipsis#1#2{%
+  \ebproof@pushsimple{$\vdots$}%
+  \ebproof@pushsimple{#1}%
+  {\ebproof@hsep=\ebproof@labelsep\relax \ebproof@joinright}%
+  {\let\ebproof@rule@do=\relax \ebproof@joinv}%
+  \ebproof@hypo{#2}%
+  {\let\ebproof@rule@do=\relax \ebproof@joinv}%
+  }
+
+%%% Environment interface
+
+\ebproof@clear
+
+\def\ebproof@begin{%
+  \edef\ebproof@start@level{\the\ebproof@level}%
+  \setbox1=\vbox\bgroup
+  \let\Hypo=\ebproof@hypo
+  \let\Infer=\ebproof@infer
+  \let\Ellipsis=\ebproof@ellipsis
+  \let\Alter=\ebproof@alter
+  \let\Delims=\ebproof@delims}
+\def\ebproof@end{%
+  \egroup
+  \ebproof@pop{X}%
+  \ifnum\ebproof@level=\ebproof@start@level\else
+    \PackageError{ebproof}{Malformed proof tree}{%
+      Some hypotheses were declared but not used in this tree.}%
+  \fi
+  \ifKV@ebproof@center
+    \hbox{$\vcenter{\hbox{\box\X@box}}$}%
+  \else
+    \box\X@box
+  \fi
+  \global\setbox\ebproof@box@temp=\box1}
+
+\newenvironment{prooftree}[1][]{%
+  \setkeys{ebproof}{#1}%
+  \leavevmode\ebproof@begin
+}{%
+  \ebproof@end}
+
+\newenvironment{prooftree*}[1][]{%
+  \center
+  \setkeys{ebproof}{#1}%
+  \leavevmode\ebproof@begin
+}{%
+  \ebproof@end
+  \endcenter}
+

@@ -1,0 +1,838 @@
+\section{Alternating parity automata and \mucalculus}
+
+
+There is fruitful relationship between \mucalculus and automata theory, at the core of which lies the equivalence between linear time \mucalculus formulas and
+alternating parity automata  (APW). But this equivalence is always shown at a semantical level:
+every APW $\C{A}$ can be encoded by a formula $[\C{A}]$ such that $\C{M}([\C{A}])=\C{L}(\C{A})$, and conversely
+  for every \mucalculus formula $F$, there is 
+an APW automaton $\C{A}_F$ such that $\C{M}(F)=\C{L}(\C{A}_F)$. 
+We show in this section that beyond this semantical equivalence, there is also an equivalence at the level of provability, that is to say $F$ and $[\C{A}_F]$ 
+are provably equivalent in \muLK.
+\comad{Pour cela on a beasoin d'encodages dans un sens et dans l'autre qui respectent la structure de l'automate et de la
+formule, ceux qu'on trouve dans la litterature ne nous satisfont pas en ce sens.}
+In \ref{sec:APW}, we  recall the model of APW automata
+and define in \ref{sec:encoding} our encoding of these automata into \mucalculus formulas. Conversely, we construct in \ref{sec:FromFormulasToAPW} for every \mucalculus formula an APW automaton, and show that the encoding of this automaton is provably equivalent to the original formula in \muLK. To do so, we need
+a technical tool, which is  an alternative definiton of \mucalculus semantics
+introduced in \cite , we recall it in \ref{sec:OpSemantics}.
+
+\subsection{Alternating parity automata}\label{sec:APW}
+
+\beginshort
+Alternating parity  automata (APW) are finite-state machines designed to accept or reject 
+infinite words. 
+APW automata combine different kinds of complexity:  (existential) non-determinsm, since an APW may have different computations over a single word; and universal non-determinsm reflected by the fact that runs have the shape of trees. Moreover, every state is assigned a priority and  
+the acceptance or rejectance of a computation relies on the minimal priority
+seen infinitely often in every infinite branch of the run\footnote{See \cite{} for an informal explanation of the functioning of APW.}.
+\endshort
+
+\beginlong
+ Alternating parity  automata (APW) are finite-state machines designed to accept or reject 
+infinite words. 
+The computation of an APW  over an infinite word proceeds in rounds. 
+At the beginning of every round, there are several copies of the APW in some position of the word, 
+each of them in its own state. During a round, each copy
+splits up in several new copies, which are sent to the successor of the current position, and change
+their states,  according to the transition function. Initially, there is only
+one copy of the APW, which is in the initial state; and which resides in the first position of the word. 
+Every computation induces a tree, labelled with the states through which the copies of the automaton went during the computation; this tree is
+ called a run and it  witnesses the causality between a copy of the
+automaton and the new copies its yields.  
+
+The acceptance or rejectance of a computation is  defined via path conditions for the infinite
+branches of the run. Namely, every state is assigned a priority
+and an infinite branch of the run is accepting if the minimal priority
+occurring infinitely often is even; a run is accepting if all its
+infinite branches are accepting.  We can see then the branching of
+ runs as a universal non-determinism,; but APW support also existential non-determinism, in the sens that an automaton may have many possible 
+computations over a single word. Formally APW are defined as follows.
+\endlong
+
+\begin{definition}
+An \defname{APW} automaton $\C{A}$ is a tuple $(\Sigma, Q, \Delta, q_I, c)$,
+ where $\Sigma$ is an alphabet, $Q$ is a finite set of states,
+$\Delta\,:\,Q \times \Sigma \times 2^Q$ is the transition relation,
+$q_I\in Q$ is the initial state and $c: Q\rightarrow \omega$ is the priority function, which assigns a priority to each state.
+
+  A \defname{run} of $\mathcal{A}$ on a word $u=(a_i)_{i\in \omega}\in \Sigma^\omega$ is a labelled tree such that: the label of the root is $q_I$; and for every node $v$ at level $n$, if $q$ is the label of $v$ and if $E$ is the set of labels  of the sons of $v$, then  $(q,a_n,E)\in \Delta$.
+\end{definition}
+
+\begin{example}\label{ex:APW}
+Let $\C{A}=(\Sigma, Q, \Delta, p, c)$ be the APW automaton where 
+$Q=\{p, q\}$, $\Delta=\{t_1,t_2,t_3\}$ wherer $t_1=(p,a,\{p\})$, $t_2=(p,a,\{p, q\})$, $t_3=(q,b,\{p, q\})$ and
+$c(p)=1, c(q)=2$. \comad{Example of a run.}
+\end{example}
+
+\begin{definition}
+Let $\C{A}=(\Sigma, Q, \Delta, q_I, c)$ and $\rho$ be an infinite word over $Q$.
+The word $\rho$ is \defname{accepting} if  $\min \ \{\; c(q) \;\mid\; q\in \Inf(\rho) \;\}$ is even. A run of $\C{A}$ is \defname{accepting} if all its branches (seen as words over $Q$) are.
+%
+ We say that $\mathcal{A}$ \defname{accepts} the word $u$
+ if there exists an accepting run of $\mathcal{A}$ on $u$.
+ %
+ The \defname{language} of $\mathcal{A}$ is
+ $\mathcal{L}(\mathcal{A}) = \{\;
+ u \in \Sigma^\omega \;\mid\; \mathcal{A} \text{ accepts } u
+ \;\}$.
+\end{definition}
+
+Non-deterministic automata are particular cases of alternating automata where
+the existential non-determinism is allowed but not the universal one.
+We present below two classes of non-deterministic automata which are subclasses of APW automata: non-deterministic parity automata (NPW) and   
+non-deterministic Büchi automata (NBW).  
+
+\begin{definition}
+A \defname{NPW} automaton is an APW where the elements of the transition relation are of the form $(p,a,\{q\})$.
+A \defname{NBW} automaton  is a NPW  $(\Sigma, Q, \Delta, q_I, c)$ where the domain of $c$ is  $\{0,1\}$. 
+A state $q$ of a NBW is said to be \defname{accepting} if $c(q)=0$. We prensent sometimes NBW as tuples of the form 
+$(\Sigma, Q, \Delta, q_I, F)$ where $F$ is the set of accepting states. 
+\end{definition} 
+
+For a non-deterministic automaton $\C{A}=(\Sigma, Q, \Delta, q_I, c)$ we can consider that $\Delta$ is a subset of
+ $Q \times \Sigma \times Q$  and that the runs are infinite words over $Q$.
+
+\subsection{Encoding APW in \mucalculus}\label{sec:encoding}
+
+The linear-time \mucalculus contains all the ingrediants to encode APW automata: disjunction  and conjunction to simulate existential and universal non-determinism; least and greatest fixed points to encode odd and even states.   
+
+To get a match between the language of an automaton and the models of the formula encoding it, we will consider automata over the alphabet  $\Sigma = 2^\At$ where $\C{P}$ is the set of atoms, whose elements will simply be denoted by $a$, $b$, etc. 
+
+\subsubsection{The encoding}
+
+We first show our encoding of  the letters of  $\Sigma$ in the \mucalculus.
+
+\begin{definition}
+Let $a\in\Sigma$. The encoding of $a$, denoted $[a]$, is the formula
+ $[a] := (\wedge_{\mathfrak{p}\in a} \mathfrak{p})
+\wedge (\wedge_{\mathfrak{q}\not\in a} \mathfrak{q}^\bot)$.
+\end{definition} 
+
+%We eventually simply write $a$ for $\encc{a}$ if there is no ambiguity. 
+
+\begin{definition} Let $\C{A}=(\Sigma, Q, \Delta, q_I, c)$ be an APW automaton.
+A \defname{run-section} is a sequence $\Gamma=((q_i,t_i))_{0\leq i\leq n}$
+of pairs in $Q\times\Delta$ such that $q_0=q_I$ and $\forall i<n,\ \exists a_i,E_i$
+ st. $t_i=(q_i,a_i,E_i)$ and $q_{i+1}\in E_i$. We say that $\Gamma$ \defname{enables}
+a state $q$ if there is a transition $t\in\Delta$ such that $\Gamma,(q,t)$ is also a run-section. 
+\end{definition}
+
+\begin{definition}[Encoding of APW]
+\label{def:encoding}
+  Let $\mathcal{A} = (Q,q_I,\Delta,c)$ be an APW automaton.
+  We assume a collection of variables $(X_q)_{q\in Q}$.
+  We define the formula $\encc{q}^\Gamma$ encoding the state $q\in Q$
+  under the run-section $\Gamma$,
+  as follows:
+  $$ \begin{array}{l}
+    {\encc{q}^\Gamma}=
+    X_q \quad \text{if }\left\{\begin{array}{ll}
+    (1)\ \Gamma=\Gamma',(q, t),(q_1,t_1),\dots,(q_n,t_n) \text{ and }\\[4ex] (2)\ q_i \neq q, c(q_i) \geq c(q) \text{ for all } 1\leq i\leq n,\end{array}\right.
+    \\[7ex]
+{\encc{q}^\Gamma} = \sigma X_q.~
+    \underset{a\in\Sigma, (t=(q,a,E)\in \Delta)}{\bigvee}
+    \encc{a} \wedge \underset{p\in E}{\bigwedge}\Next {\encc{p}^{\Gamma,(q,t)}}\\[15pt]
+    \qquad \qquad \qquad \qquad \qquad \text{otherwise, with }
+     \sigma=\nu \text{ iff } c(q) \text{ is even}.\qquad
+  \end{array} $$
+When unspecified, $\Gamma$ is taken to be empty. We finally set
+$\encc{\mathcal{A}} = {\encc{q_I}}$.
+\end{definition}
+
+The encoding starts from the initial state and traverses the automaton,  encoding every state $q$ by a fixed point $\mu X_q$, if $q$ is a state with an odd priority and $\nu X_q$ otherwise. The environment $\Gamma$ remembers the states that have been visited from the initial state to the current state. If the current state $q$ has been seen before (and if the states seen since the last time $q$ was visited have bigger priorities) then we encode it by its corresponding variable $X_q$, which ensurs that the algorithm of encoding will halt at some point. 
+\begin{example}
+ The encoding of $\C{A}$ of Example~\ref{ex:APW} is the formula:
+ $$[\C{A}]=\mu X_p. ([a]\wedge \odot X_p)\vee ([a] \wedge \odot (\nu X_q. [b]\wedge \odot X_q \wedge \odot X_p)\wedge \odot X_p )$$
+\end{example}
+
+A key ingredient in this encoding is the
+side condition of the first case of the definition.  The
+aim of this condition is to bridge the gap between the acceptance condition on
+runs of the automaton and the validity condition on threads. The
+latter is almost a parity condition, but with a parity ordering corresponding to the subformula ordering. To obtain a match between
+the two orderings, we need to control the formation of cycles. This is illustrated by Proposition~\ref{AdequacyThreadsRuns}.
+\begin{example}
+  Consider the following Büchi automata,
+  where even states are double-circled:\\
+    \begin{tabular}[h]{ccc}
+      $\mathcal{A}_1$: \hspace{-15pt}
+      \begin{tikzpicture}[shorten >=0.5pt,node distance=1cm,auto] 
+        \node[state,initial,inner sep=2.5pt,minimum size=2pt] (q_0)   {$p$}; 
+        \node[state,accepting,inner sep=2.5pt,minimum size=2pt] (q_1) [right of= q_0] {$q$};
+        \path[->] 
+        (q_0) edge [bend left=30] node {$a$} (q_1)
+        (q_1) edge [bend right=-30] node {$a$} (q_0);
+      \end{tikzpicture}
+      &
+      $\mathcal{A}_2$:%\hspace{-15pt}
+      \begin{tikzpicture}[shorten >=0.5pt,node distance=1cm,auto] 
+        \node[state,initial,inner sep=2.5pt,minimum size=2pt] (q_0)   {$p$}; 
+        \node[state,accepting,inner sep=2.5pt,minimum size=2pt] (q_1) [right of= q_0]   {$q$}; 
+        \node[state,inner sep=2.5pt,minimum size=2pt] (q_2) [right of= q_1] {$p'$};
+        \path[->] 
+        (q_1) edge [bend left=30] node {$a$} (q_2)
+        (q_2) edge [bend right=-30] node {$a$} (q_1)
+        (q_0) edge node {$a$} (q_1);
+      \end{tikzpicture}
+    \end{tabular}\\
+  A naive encoding of $\C{A}_1$ would be
+  $\mu X_p.(a\land \Next (\nu X_q. a\land \Next X_p))$.
+  It is incorrect since that formula is equivalent to $\bot$.
+  The problem is that the infinite traversal of the
+  formula corresponds to a cycle on $X_p$, with a regeneration of $X_q$
+  at each step. In a sense, $X_q$ is hidden by $X_p$ in this encoding.
+  Our encoding of $\mathcal{A}_1$ is the
+  same as for $\mathcal{A}_2$, which is an unfolding of $\C{A}_1$.
+  More generally, the encoding can be seen as duplicating states
+  so as to avoid that a state is hidden by a state with bigger priority:
+  $$
+  \encc{\mathcal{A}_1} = \encc{\mathcal{A}_2} =
+  \mu X_p.\ a\land \Next (\nu X_q.\ a\land
+    \Next (\mu X_{p'}.\ a\land\Next X_q)))
+  $$
+\end{example}
+
+
+The following proposition, proved in \cite{TechReport}, shows that the language of an automaton and the models of its encoding are equal.
+ 
+\begin{proposition}
+For any  APW automaton $\C{A}$, $\C{M}([\C{A}])=\C{L}(\C{A})$
+\end{proposition}
+
+\subsubsection{FL-suboccurrences of the encoding}
+
+The \muLKo proofs involving a formula $[\C{A}]$, that we will deal with later, will decompose $[\C{A}]$ into its  FL-suboccurrences. To simplify the manipulation 
+of these FL-suboccurrences, we introduce in this section same handy notation, then we relate the threads of  $[\C{A}]$ which are sequences of 
+FL-suboccurrences of  $[\C{A}]$ to the runs of the automaton $\C{A}$.
+
+\begin{definition}%[Address of a run-section]
+Let $\Gamma=((q_i,t_i))_{0\leq i\leq n}$ be a run-section of the APW automaton $\C{A}$ and $q$ a state enabeled by $\Gamma$. Let $p$ be the path in the graph of $[\C{A}]$ that visits successively the
+ nodes labelled $\sigma X_{q_i}$, following the transitions $t_i$, and ends with the node labelled $\sigma X_q$. The \defname{address of} 
+$(\Gamma, q)$, denoted $\alpha_{\Gamma,q}$, is the label of the path $p$. 
+\end{definition}
+\comad{Clair ou pas?}
+
+\begin{example}\label{ex:AddressOfRun}
+Consider the automaton $\C{A}$ of Example~\ref{ex:APW}. The graph of its encoding is the following:
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=.8cm, semithick]
+
+  \node (p)  at (0,0)  {$\nu X_p$};
+   \node (disjp) at (0,-1) {$\vee$}; 
+  \node (conj1p)  at (-1,-2)      {$[a]\wedge \Next$};
+
+  \node (conj2p)  at (1,-2)      {$[a]\wedge \Next$};
+
+  \node (q)  at (0,-3)  {$\mu X_q$};
+  \node (conj1q)  at (0,-4)      {$[b]\wedge \Next$};
+
+ \path
+     (p) edge [red]  node  {$\Ai$} (disjp)
+       (disjp) edge node [above] {$\Al$} (conj1p)
+     (disjp) edge [red]  node {$\Ar$} (conj2p)
+       (conj1p) edge [bend left] node {$\Ar\Ai$} (p)
+       (conj2p) edge [red]  node {$\Ar\Al\Ai$} (q)
+       (conj2p) edge  [bend right] node [right] {$\Ar\Ar\Ai$} (p)
+       (q) edge  [red] node {$\Ai$} (conj1q)
+ (conj1q) edge [bend left=80,red] node {$\Ar\Ar\Ai$} (q)
+ (conj1q) edge [bend right=100] node[right] {$\Ar\Al\Ai$} (p);
+\end{tikzpicture}
+\end{center}
+The run-section $\Gamma=(p,t_2),(q,t_3)$ enables the state $q$, their corresponding path is colored in red. The address $\alpha_{\Gamma,q}$ is $\Ai\Ar\Ar\Al\Ai\Ai\Ar\Ar\Ai$. 
+\end{example}
+
+\begin{definition}
+Let $\Gamma$ be a run-section of $\C{A}$, and $q$ a state enabled by $\Gamma$. We denote by $\interp{q}^\Gamma$
+the FL-suboccurrence of $[\C{A}]$ at the address  
+$\alpha_{\Gamma,q}$, \ie the occurrence $\phi_{\alpha_{\Gamma,q}}$ such that: $[\C{A}]\rightarrow^\star\phi_{\alpha_{\Gamma,q}}$.
+\end{definition}
+
+\begin{remark}
+If $q_I$ is the itnitial state of  $\C{A}$, then $\interp{q_I}^\emptyset=[\C{A}]_\epsilon$.
+\end{remark}
+
+\begin{example}
+Let $\Gamma$ be the run-section of Example~\ref{ex:AddressOfRun}. One has
+$\interp{q}^\Gamma=(\mu X_q. [b]\wedge \odot X_q \wedge \odot [\C{A}])_{\alpha_\rho}$. 
+\end{example}
+
+\begin{remark}
+We have chosen the notation $\interp{q}^\Gamma$  because of the proximity between these FL-suboccurrences and the formulas $[q]^\Gamma$. Indeed, one can show that
+  $\interp{q}^\Gamma$ is obtained by substituting iteratively the free variables of $[q]^\Gamma$ by their binders in $[\C{A}]$. 
+\end{remark}
+
+ \begin{remark}
+The formulas $\interp{q}^\Gamma$ are fixed point formulas. Conversely, all the fixed point FL-subformulas of $[\C{A}]$ are of the form $\interp{q}^\Gamma$ where $\Gamma,q$ is a run-section.
+\end{remark}
+
+The following proposition will be very useful for further proofs. It shows that contrarily to $[q]^\Gamma$, there is no 
+case analysis to perform on $\Gamma$ and $q$ to figure out the shape of  $\interp{q}^\Gamma$.
+
+
+ \begin{proposition}\label{propo:NoCaseAnalysis}  
+Let $\mathcal{A}$ be an APW automaton, $q$ a state  and $\Gamma$ a run-section. One has:
+$$\interp{q}^\Gamma \rightarrow
+    \underset{t=(q,a,E)\in \Delta}{\bigvee}
+    \encc{a} \wedge \underset{p\in E}{\bigwedge}\Next \interp{p}^{\Gamma,(q,t)}$$
+\end{proposition}
+
+Using Proposition~\ref{propo:NoCaseAnalysis}, we can derive easily the following rule, which "plays" transitions in the proof system \muLKi.
+
+\begin{proposition}\label{prop:transition}
+Let $\C{A}$ be an automaton of transition relation $\Delta$, let $q$ be state of $\C{A}$ and $\Gamma$ a run-section. For every set of occurrences $\Theta$, the following rule is derivable using an easy derivation:
+$$\begin{prooftree}
+      \Hypo{\{ [a], \odot \{\interp{p}^{\Gamma,(q,t)}\}_{p\in E} \vdash  \Theta\}_{t=(q,a,E)\in \Delta_\phi}}
+      \Infer{1}[]{\interp{q}^\Gamma\vdash  \Theta}
+    \end{prooftree}
+$$
+\end{proposition} 
+
+\begin{proof} 
+Since $\interp{q}^\Gamma \rightarrow
+    \underset{t=(q,a,E)\in \Delta}{\bigvee}
+    \encc{a} \wedge \underset{p\in E}{\bigwedge}\Next \interp{p}^{\Gamma,(q,t)}$
+, one can derive the following:
+$$\begin{prooftree}
+    \Hypo{ \{ \encc{a},  \{\odot\interp{p}^{\Gamma,(q,t)}\}_{p\in E}\vdash \Theta \}_{t=(q,a,E)\in \Delta}}
+     \Infer[rulestyle=double]{1}[\rconjl]{ \{  \encc{a} \wedge \underset{p\in E}{\bigwedge}\Next \interp{p}^{\Gamma,(q,t)}\vdash \Theta\}_{t=(q,a,E)\in \Delta}}
+   \Infer[rulestyle=double]{1}[\rdisjl]{ \underset{t=(q,a,E)\in \Delta}{\bigvee}
+    \encc{a} \wedge \underset{p\in E}{\bigwedge}\Next \interp{p}^{\Gamma,(q,t)} \vdash  \Theta}
+    \Infer{1}[\rsigmal]{\interp{q}^\Gamma\vdash \Theta}
+    \end{prooftree}
+$$
+Notice that this is an easy derivation.
+\end{proof}
+
+Now we will relate the threads of the formula encoding an automaton $\C{A}$ to the run branches of $\C{A}$. 
+For that, we define first the run-branch corresponding to a thread of $[A]$
+and then we show that they have the same priority in the sens that a thread of $[\C{A}]$ is a $\nu$-thread iff its corresponding run branch
+ is valid.
+
+\begin{definition}
+ Let $\C{A}$ be an APW automaton, and $t$ be a thread of $[\C{A}]$. Let 
+$(\interp{q_i}^{\Gamma_i})_{i\in\omega}$ be the sequence of fixed point occurrences apprearing in $t$. The \defname{run-branch} of $t$ is defined by $\rho(t):=(q_i)_{i\in\omega}$.
+\end{definition} 
+
+\begin{remark}
+It is easy to see that the run-branch of a thread is indeed a branch in a run of $\C{A}$.
+\end{remark}
+
+\begin{proposition}\label{AdequacyThreadsRuns}
+ Let $\C{A}$ be an APW automaton, $c$ be its priority function, and let $t$ be a thread of  $[\C{A}]$. The thread $t$ is a $\nu$-thread iff $\rho(t)$ is a valid.
+\end{proposition}
+
+\subsection{Operational semantics}\label{sec:OpSemantics}
+
+Our goal now is to extract an APW automaton from evry \mucalculus formula. In \cite{JaninWaluk95}, an alternative definition
+of formulas semantics is presented, which is equivalent to  Definition~\ref{def:semantics}, but with the advantage that
+it makes formulas look like automata-like devices, checking whether words over $\Sigma$ are models or nots. This is exactly what we need to acheive our goal. Their definition being introduced for modal \mucalculus, we specialize it to the case of linear time \mucalculus.  
+
+\begin{definition}\label{constraint}
+ We call \defname{constraint} any set of litterals. 
+\beginlong
+A constraint is said to be \defname{coherent}
+if it dos not contain at the same time a propositional variable  and its negation.
+\endlong
+The \defname{constraint of a letter} $a\in\Sigma$, 
+denoted $c(a)$, is the constrainte $a\cup\{p^\bot \ \vert \ p\notin a\}$. 
+A letter $a$ \defname{satifies a contraint} $c$, and we write $a\models c$,  iff
+$c\subseteq c(a)$.
+\end{definition}
+
+\beginlong
+\begin{remark}
+The constraint of a letter is always coherent. If a letter $a$ satisfies a constraint $c$, then 
+$c$ is coherent.
+\end{remark}
+\endlong
+
+\begin{definition}%[$F$-derivation]
+Let $F$ be an occurrence. The \defname{$F$-derivation} is a \muLKi open derivation of conclusion $F\vdash $ obtained by applying all the possible logical rules ($\mu, \nu, \vee, \wedge$), except for the $\Next$ rule, to $F$ and its sub-occurrences, until reaching sequents of the form $C, \Next\Delta\vdash $ where $\overline{C}$ is a constraint. 
+\beginlong
+Recall that  $\overline{\textcolor{white}{l}.\textcolor{white}{l}}$ is the function forgetting  adresses (Definition~\ref{def:OperationsOccurrences}).    
+\endlong 
+The set of \defname{successors of  $F$}, denoted $S(F)$, is the set of premisses of the $F$-derivation. 
+\end{definition}
+
+
+\begin{remark}
+The $F$-derivation is finite because $F$ is guarded.
+\end{remark}
+
+\begin{remark}
+There are many possible $F$-derivations for a given occurrence $F$, but they 
+differ only by the order of application of the logical rules. In particular, they all share the same set of premisses and the same structure of threads.
+ We choose any representant of this class of derivations to be \defname{the} $F$-derivation. 
+\end{remark}
+
+\begin{example}\label{ex:FDerivation}
+Let $F=\nu X. \mathfrak{p}\wedge((\Next X)_\alpha \vee G)\wedge (\Next X)_\beta $, where
+$G=\mu Y. \mathfrak{q}\wedge(\Next Y)_\gamma$. The $F$-derivation is the following:
+\begin{center}
+\scalebox{.8}{
+$$\begin{prooftree}
+      \Hypo{\mathfrak{p}, (\Next F)_\alpha, (\Next F)_\beta \vdash}
+      \Hypo{\mathfrak{p}, \mathfrak{q},  (\Next G)_\gamma, (\Next F)_\beta \vdash}
+      \Infer[rulestyle=double]{1}[\rmu,\rconjl]{\mathfrak{p},  G, (\Next F)_\beta \vdash}
+      \Infer{2}[\rdisj]{\mathfrak{p}, (\Next F)_\alpha \vee G, (\Next F)_\beta\vdash}
+      \Infer[rulestyle=double]{1}[\rnu,\rconj,\rconj]{F\vdash}
+    \end{prooftree}
+$$}
+\end{center}
+We sometimes write an $F$-derivation as a rule named $F$, as in the following example:
+\begin{center}
+\scalebox{.8}{
+$$\begin{prooftree}
+      \Hypo{\mathfrak{p}, (\Next F)_\alpha, (\Next F)_\beta \vdash}
+      \Hypo{\mathfrak{p}, \mathfrak{q},  (\Next G)_\gamma, (\Next F)_\beta \vdash}
+      \Infer{2}[\scriptsize{($F$)}]{F\vdash}
+    \end{prooftree}
+$$}
+\end{center}
+\beginlong
+Recall that if $F$ is an occurrence and $\beta$ an address, $F_\beta$ is the relocation of $F$
+in $\beta$ (Definition~\ref{def:OperationsOccurrences}). Recall also that we made the choice not write explicitely the addresses of atoms.
+\endlong
+\end{example}
+
+\begin{definition}%[$\Delta$-derivation]
+Let $\Delta:=\{F_i\}_{1\leq i\leq n}$ be a set of occurrences. 
+The \defname{$\Delta$-derivation} is a \muLKi open derivation of conclusion $\Delta\vdash $ obtained by applying successively, and for all $1\leq i\leq n$, the $F_i$-derivations until reaching sequents of the form  $C, \Next\Delta\vdash $ where $\overline{C}$ is a constraint.
+The set of \defname{successors of  $\Delta$}, denoted $S(\Delta)$, is the set of premisses of the $\Delta$-derivation.
+\end{definition}
+
+\begin{remark}\label{rmq:ProduitSuccesseurs}
+If $\Delta=F_1\dots,F_n$ then $S(\Delta)=S(F_1)\times\dots\times S(F_n)$.
+\end{remark}
+
+
+\beginlong
+\begin{remark}
+Here again, there are many possible $\Delta$-derivations but they differ only by the order where $F_i$ -derivations are applied. They all share the same structure of threads and the same set of premisses. 
+\end{remark}
+\endlong
+\begin{example} Let $F$ be the occurrence of Example~\ref{ex:FDerivation} and $H=\nu X. \mathfrak{r}\wedge(\Next X)_\delta$. The $\{F,H\}$-derivation is the following:
+\begin{center}
+\scalebox{.8}{
+$\begin{prooftree}
+      \Hypo{\mathfrak{p}, \mathfrak{r},  (\Next F)_\alpha, (\Next F)_\beta, (\Next H)_\delta \vdash}
+      \Infer{1}[\scriptsize{($H$)}]{\mathfrak{p}, (\Next F)_\alpha, (\Next F)_\beta, H \vdash}
+      \Hypo{\mathfrak{p}, \mathfrak{q}, \mathfrak{r}, (\Next G)_\gamma, (\Next F)_\beta, (\Next H)_\delta \vdash}
+      \Infer{1}[\scriptsize{($H$)}]{\mathfrak{p}, \mathfrak{q},  (\Next G)_\gamma, (\Next F)_\beta, H \vdash}
+      \Infer{2}[\scriptsize{($F$)}]{F, H\vdash}
+    \end{prooftree}
+$}
+\end{center}
+We sometimes write a $\Delta$-derivation as a rule named $\Delta$, as in the following example:
+\begin{center}
+\scalebox{.8}{
+$\begin{prooftree}
+      \Hypo{\mathfrak{p}, \mathfrak{r},  (\Next F)_\alpha, (\Next F)_\beta, (\Next H)_\delta \vdash}
+      \Hypo{\mathfrak{p}, \mathfrak{q}, \mathfrak{r}, (\Next G)_\gamma, (\Next F)_\beta, (\Next H)_\delta \vdash}
+      \Infer{2}[\scriptsize{($\{F,H\}$)}]{F, H\vdash}
+    \end{prooftree}
+$}
+\end{center}
+\end{example}
+
+\begin{definition}[$\Pi(\Delta)$]\label{def:PiDePhi}
+We define \defname{$\Pi(\Delta)$} to be the  \muLKi pre-proof of conclusion $\Delta \vdash$, 
+obtained by applying coinductively the following scheme:
+\begin{center}
+\scalebox{.8}{$
+\begin{array}{lll}
+\Pi(\Delta)& = &\begin{prooftree}
+      \Hypo{\Pi(\Delta_1)}
+      \Infer{1}[\rnext]{C_1, \Next\Delta_1\vdash}
+      \Hypo{\dots}
+      \Hypo{\Pi(\Delta_n)}
+      \Infer{1}[\rnext]{C_n, \Next\Delta_n\vdash}
+      \Infer{3}[\scriptsize{($\Delta$)}]{\Delta\vdash}
+    \end{prooftree}
+\end{array}
+$}
+\end{center}
+\end{definition}
+
+\begin{example}\label{ex:PiF}
+ Let $\phi=\mu X. \nu Y. \odot(Y\vee X)$. We set, $\psi= \nu Y. \odot(Y\vee \phi)$ and $\delta=\psi\vee \phi$. The derivation $\Pi(\phi)$ is the following:
+\begin{center}
+\scalebox{.8}{
+$\begin{prooftree}
+      \Hypo{(\dagger)}
+      \Infer{1}{\delta_{\Ai\Ai\Ai\Al\Ai\Ai} \vdash}      
+      \Infer{1}[\rnext]{(\odot\delta)_{\Ai\Ai\Ai\Al\Ai} \vdash}
+      \Hypo{(\dagger)}
+      \Infer{1}{\delta_{\Ai\Ai\Ai\Ar\Ai\Ai\Ai} \vdash}      
+      \Infer{1}[\rnext]{(\odot\delta)_{\Ai\Ai\Ai\Ar\Ai\Ai} \vdash}
+      \Infer{2}[\scriptsize{($\delta_{\Ai\Ai\Ai}$)}]{(\dagger)\ \delta_{\Ai\Ai\Ai} \vdash}
+      \Infer{1}[\rnext]{(\odot\delta)_{\Ai\Ai} \vdash}
+      \Infer{1}[\scriptsize{($\phi_\epsilon$)}]{\phi_\epsilon\vdash}
+    \end{prooftree}
+$}
+\end{center}
+\end{example}
+
+\begin{remark}
+Notice that $\Pi(F)$ is  not a \muLKi proof in general, because it dos not always satisfy the validity condition. This is not a problem, since the goal is to use it as a support to compute the set of models of $F$.
+\end{remark}
+
+
+
+\begin{definition}[Language of a formula]
+Let $\beta$ be a branch of $\Pi(F)$ and $(C_1, \Next \Delta_1)(C_2, \Next \Delta_2)\dots$
+be the sequence of the conclusions of the $\Next$ rules in $\beta$.
+The word $u=a_1a_2\dots$ is said to be \defname{induced} by $\beta$ iff $\forall i,$ $a_i\models \overline{C_i}$. 
+The branch $\beta$ is said to be \defname{accepting} if it contains no $\mu$-thread.
+The \defname{language of} $F$, denoted $\C{L}(F)$, is the set of words induced by the accepting branches of  $\Pi(F)$.
+\end{definition}
+
+\begin{remark}
+The use of automata-theoretic vocabulary is due to the fact that we can see an occurrence $F$ as a sort of APW automaton. Indeed, when we put $F$ in the left hand-side of the sequent, the left disjunction rules become branching, and we can see 
+each branch as a  non-deterministic choice of a run, while the conjuction rule is non branching and we can see the application of conjuction rule as constructing an alternating run. Hence, every infinite branch of $\Pi(F)$ can be seen as a run of an alternating automaton. Moreover, the acceptance condition of a branch of  $\Pi(F)$ recalls the parity condition for APW automata.
+We will make this remark more precise in the next sections.   
+\end{remark}
+
+\begin{proposition}[\cite{JaninWaluk95}]\label{prop:JaninWaluk}
+For every formula $F$, $\C{L}(F)=\C{M}(F)$.
+\end{proposition}
+
+
+\subsection{From Formulas to APW automata}\label{sec:FromFormulasToAPW}
+
+In this section, we exploite the intuitions and tools developped in Section~\ref{sec:OpSemantics} to extract from every \mucalculus formulas
+$\phi$ an APW automaton $\C{A}_\phi$. We show not only that $\phi$ and $[\C{A}_\phi]$ are semantically equivalent, but also that 
+$[\C{A}_\phi]\vdash\phi$ is provable in \muLK.
+
+\subsubsection{APW of a formula}
+
+Let us give an outline of the construction of the APW automaton $\C{A}_\phi$ corresponding to a formula $\phi$.
+The construction of Section~\ref{sec:OpSemantics} suggests that we can see the FL-suboccurrences of $\phi$ as the states of an APW automaton, whose
+transitions are given by the $F$-derivations, where $F$ is a FL-suboccurrence of $\phi$. Indeed, if we consider an $F$-derivation, as the one shown below:
+$$
+\begin{prooftree}
+      \Hypo{C_1, \Next\Delta_1\vdash}
+      \Hypo{\dots}
+      \Hypo{C_n, \Next\Delta_n\vdash}
+      \Infer{3}[\scriptsize{($F$)}]{F\vdash}
+    \end{prooftree}
+$$
+we can think of the branching of the $F$-derivation as a form of non-determinism, meaning that every premise yields a possible transition of the automaton
+when it is in the state $F$; and we can think of the commas in each premise as conjunction or universel non-determinsim, meaning that 
+if the automaton is in the state $F$ and reads a letter $a$  which satisfies some constraint $C_i$, then the automaton goes to the states corresponding 
+to the formulas of $\Delta_i$.  
+
+Notice that every branch $b$ of the derivation
+$\Pi(F)$ can be mapped to a run of the automaton under construction, over any  word induced by this branch $b$.
+
+To assign priorities to the states of this automaton in a way that preserves the semantics of the formula, one have to look at the formulas hidden 
+in the $F$-derivations. For instance, if we consider the derivation $\Pi(\phi)$ of Example~\ref{ex:PiF},  what makes the leftmost branch of $\Pi(\phi)$ accepting is the formula $\psi$ hidden in the $\delta$-derivation. Even if we want to consider $\delta$ as the
+state of $\C{A}_{\phi}$, we want the priority of $\delta$ to be that of $\psi$, at least in the leftmost run.  One solution would be, for every $F$-derivaton as above, to set the priority of a formula $G$ appearing in some $\Delta_i$ 
+to be the priority of the minimum of the thread linking $G$ to $F$. The problem is that we may have two different occurrences of $G$ in the $F$-derivation, linked to $F$ with two threads having differenet minimumal formulas. For instance,  in Example~\ref{ex:PiF},  the minimum of the thread linking $\delta_{\Ai\Ai\Ai\Al\Ai\Ai} $ to $\delta_{\Ai\Ai\Ai}$ is $\phi$, while the minimum of the thread linking $\delta_{\Ai\Ai\Ai\Ar\Ai\Ai\Ai}$ to  $\delta_{\Ai\Ai\Ai}$
+is $\psi$. Notice that the rightmost branch of $\Pi(\phi)$ is not
+accepting, even if it has he same "visible part" as the leftmost branch.
+Thus, in the alternating automaton corresponding to formula $\phi$ of this
+example, one should have two copies of the state $\delta$, one with priority corresponding to $\phi$ and the other
+with priority corresponding to $\psi$.  
+
+More generally, the states of the alternating automaton correponding 
+to a formula will be pairs of formulas, written as  $\delta^\psi$, where $\delta$ is morally the state and $\psi$ is  a formula containing the priority information.
+
+To make this construction work, we have to ensure that in an $F$-derivation,
+every thread linking $F$  to a formula occurrence appearing in a premise of this $F$-derivation admits a minimal formula. This is what the following 
+proposition shows.  
+
+\begin{proposition}
+Let $s$ be a successor of $F$ and $G\in s$. The thread of the $F$-derivation, linking $F$
+ to $G$, has a minimal formula $\psi$ wrt. the subformula ordering. 
+\end{proposition}
+
+\beginlong
+\begin{proof}
+It suffices to notice that the thread $t$ linking $F$ to $G$ is a straight thread. By Proposition~\ref{propo:StraigthAdmitMin} it admits a minimal formula wrt. the subformula ording. 
+\end{proof}
+\endlong
+
+\begin{notation}
+Let $s$ be  a successor of $F$ and $G\in s$. If the thread linking $F$ to $G$ has a minimal formula $\psi$, we write 
+$F \overset{s,\psi}{\rightarrow} G$. 
+\end{notation}
+
+\beginlong
+The following proposition is traightforward. It shows that the minimum of the thread linking $F$ 
+to a formula occurrence $G$ appearing in one of its successors do not change if we relocate $F$.
+
+\begin{proposition}\label{prop:MinNeChangePas}
+Let  $\phi_\alpha$ be a formula occurrence and $s$ be  a successor of $\phi_\alpha$. The sequent $s$ is of the form 
+$s=\{(\phi_i)_{\alpha.\alpha_i}\}_{0\leq i\leq n}$. Moreover, for every address $\gamma$,  the sequent $s'=\{(\phi_i)_{\beta.\alpha_i}\}_{0\leq i\leq n}$ is a successor of $\phi_\beta$, and 
+$\forall i\leq n$ if  $\phi_\alpha \overset{s,\psi}{\rightarrow}(\phi_i)_{\alpha.\alpha_i}$ then $\phi_\beta \overset{s,\psi}{\rightarrow}(\phi_i)_{\beta.\alpha_i}$.
+\end{proposition}
+\endlong
+
+We define in the following, for every formula $\phi$, a function $p_\phi$
+that assigns to a every FL-subformula of $\phi$ an integer, in a way that
+respects the subformula ordering and that is compatible with the nature of fixed-point formulas.
+
+\begin{definition}
+Let $\phi$ be a formula and let $p_\phi: FL(\phi)\rightarrow \omega$ to be a function such that:
+\begin{itemize}
+\item $\psi$ is a $\mu$-formula if and only if $p_\phi(\psi)$ is odd. 
+\item If $\psi\leq \delta$ then $p_\phi(\psi)\leq p_\phi(\delta)$.
+\end{itemize}
+The function $p_\phi$ is not unique but we can fix one arbitrarily. 
+\end{definition}
+
+The function $p_\phi$ will be used to assign priorities to the states 
+of the APW automaton corresponding to the formula $\phi$.
+
+\begin{definition}[APW of a formula]
+The APW automaton associated to $\phi$, denoted $\C{A}_\phi$, is the tuple $(\Sigma, Q, q_I, \Delta_\phi, c)$ where the set of states is $Q=\{\delta^\gamma \ \vert\ \delta, \gamma \in FL(\phi)\}$,
+ the initail state is $q_I=\phi^\phi$, the priority function is defined by  $c(\delta^\gamma)=a(\gamma)$ and the transition relation $\Delta_\phi$ is defined as follows. 
+
+$(\delta^\gamma, a, \{\delta_1^{\gamma_1},\dots,\delta_n^{\gamma_n}\})\in\Delta_\phi$ iff $\exists s\in S(\delta)$ such that:  
+\begin{itemize}
+\item The sequent $s$ is of the form $s=C,\{(\Next\delta_n)_{\alpha_n}\}_{1\leq i\leq n}$.
+\item The letter $a$ satisfies the constaint $\overline{C}$ ie.  $a\models \overline{C}$.
+\item For all $i$, $\delta_i$ is the minimal formula of the thread linking $\delta_\epsilon$ to  $(\Next\delta_i)_{\alpha_i}$ in the $\delta$-derivation ie. $\delta_\epsilon \overset{s,\gamma_i}{\rightarrow} (\Next\delta_i)_{\alpha_i}$. 
+\end{itemize}
+
+
+ \end{definition}
+
+
+
+\begin{remark}
+The choice of $q_I$ as $\phi^\phi$ is arbitrary, one could choose any state of the form   $\phi^\delta$.
+\end{remark}
+
+\beginlong
+\begin{remark}\label{rmq:RelationTransitionAdresse}
+Notice that  tanks to Proposition~\ref{prop:MinNeChangePas}, we can replace in the definition of $\Delta_\phi$,  $S(\phi)$ by $S(\phi_\alpha)$ where  $\alpha$ is any adress, provided 
+that we replace the third condition by: $\forall i, \delta_\alpha \overset{s,\gamma_i}{\rightarrow} (\Next\delta_i)_{\alpha_i}$. 
+\end{remark}
+\endlong
+
+%\section{Adequacy}
+
+\begin{theorem}
+Let $\phi$ be a formula. One has:
+$$ \C{L}(\C{A}_\phi) = \C{M}(\phi)$$
+\end{theorem}
+
+
+
+\subsubsection{$\interp{\C{A}_\phi}\vdash \phi_\epsilon$ in \muLK}
+
+We show that there is a proof of $\interp{\C{A}_\phi}\vdash \phi_\epsilon$ in \muLK. The idea is to construct an easy proof of 
+this sequent in \muLKo, and using Proposition~\ref{prop:easyIsTranslatable}, transform it into a proof in \muLK.
+
+Since $\phi^\phi$ is the initial state of $\C{A}_\phi$, one has that $\interp{\C{A}_\phi}=\interp{\phi^\phi}^\emptyset$, hence our goal is to show 
+that the sequent $\interp{\phi^\phi}^\emptyset\vdash \phi_\epsilon$ has an easy \muLKo proof. To get this result, we need to generalize our statement and look for proofs of  
+sequents having the form $\interp{\psi^\delta}^\Theta\vdash \psi_\alpha$, where  $\psi^\delta$ is a state of  $\C{A}_\phi$, $\Theta$ a run-section and $\alpha$ an adress.
+Using Proposition~\ref{prop:transition}, we decompose the left hand side of such sequents and get the following derivation:
+$$\begin{prooftree}
+   \Hypo{\{ [a], \{\odot\interp{\psi_i^{\delta_i}}^{\Theta,(\psi^\delta,t)}\}_{1\leq i\leq n} \vdash  \psi_\alpha\}_{t=(\psi^\delta,a, \{\psi_i^{\delta_i}\}_{1\leq i\leq n})\in \Delta_\phi}}
+      \Infer{1}[]{\interp{\psi^\delta}^\Theta\vdash  \psi_\alpha}
+    \end{prooftree}
+$$
+Each premise of this derivation  corresponds to a transition
+in $\Delta_\phi$, and by construction of $\Delta_\phi$, every such transition corresponds to a successor $s \in S(\psi)$.
+To get a proof of such premise which  is easy, we have to apply weaknings at some points, so that the context arround the fixed points while unfolding them will be empty.
+ The choice of these weaknings will be guided by this successor $s$ in a sense that we 
+will clarify 
+in the following. But first, let us look closely to the notion of the successor of a formula.
+   
+If $s$ is the successor of $\psi$, for every $F\in s$, the adress of $F$ induces a path in the tree of $\psi$.
+When we collect  all the paths induced  by the formula occurrences of $s$, we get a subtree of   $\tau(\phi)$,
+as illustrated by the following example.
+\begin{example}\label{ex:successorSubtree}
+Let $\psi=\mu X. ((\odot X\wedge \mathfrak{p})\vee \odot\delta)\wedge (\mathfrak{q}\vee  \odot\delta)$ where $\delta=\nu Y. \odot Y$. Let $s=\mathfrak{p}, (\odot\psi)_\alpha, (\odot\delta)_\beta$  be the successor of $\psi_\epsilon$ where $\alpha=\Ai\Al\Al\Al$ and $\beta=\Ai\Ar\Ar$. The paths of $\tau(\psi)$ induced by the formula occurrences of $s$ are colored in red:
+\begin{center}
+\scalebox{.85}{
+     \begin{tikzpicture}[grow=down, level distance = 1cm, ->,>=stealth',shorten >=1pt,auto,semithick, level 2/.style={sibling distance=3cm},
+level 3/.style={sibling distance=2cm}]   
+     \node at (0,0) { $\tau(\psi)$ }   ; 
+     \node at (1,0) { $=$ }   ; 
+     \node at (2,0){$\mu X$} 
+      child [red]{ 
+        node {$\wedge$} 
+             child{ 
+                 node {$\vee$}
+                              child{ 
+                                node {$\wedge$}
+                                             child{ 
+                                               node {$\odot$}
+                                                 child [black]{ 
+                                                   node {$X$}
+                                                   edge from parent node {$\Ai\ $}
+                                                 }
+                                               edge from parent node [above] {$\Al\ $}
+                                             }
+                                             child{ 
+                                               node {$\mathfrak{p}$}
+                                               edge from parent node {$\Ar$}
+                                             }
+                                edge from parent node [above] {$\Al\ $}
+                              }
+                              child [black]{ 
+                                node {$\odot$}
+                                             child{ 
+                                               node {$\tau(\delta)$}
+                                               edge from parent node {$\Ai\ $}
+                                             }
+                                edge from parent node {$\Ar$}
+                              }
+                 edge from parent node [above] {$\Al\ $}
+             }
+             child{ 
+                 node {$\vee$}
+                              child [black]{ 
+                                node {$\mathfrak{q}$}
+                                edge from parent node [above]{$\Al\ $}
+                              } 
+                               child{ 
+                                node {$\odot$}
+                                             child [black]{ 
+                                               node {$\tau(\delta)$}
+                                               edge from parent node {$\Ai\ $}
+                                             }
+                                edge from parent node {$\Ar$}
+                              }
+                 edge from parent node {$\Ar$}
+             }             
+        edge from parent node {$\Ai\ $}
+      }; 
+ 
+ \end{tikzpicture}}
+\end{center} 
+\end{example}
+
+Any node $n$ of this subtree satisfies the following properties:
+\begin{itemize}
+\item If $n$ is labelled $\odot$, then the son of $n$ do not belong to this subtree. 
+\item If $n$ is labelled $\wedge$, then the two sons of $n$ belong also to this subtree.
+\item If $n$ is labelled $\vee$, then exactly one son of $n$ belongs to this subtree.
+\end{itemize}
+
+A successor of a formula can be seen as one possible resolution of the non-determinism induced by the formula. We formalize this idea with what we call the \emph{choice}
+of a successor. 
+
+\begin{definition}
+Let $s=\{(\delta_i)_{\alpha_i}\}_{1\leq i\leq n$ be the successor of an occurrence $F=\phi_\alpha$. For all $\alpha_i$, there is $p_i$ st. $\alpha_i=\alpha.p_i$.
+
+The \defname{choice} of $s$ is a partial function on occurrences defined as follows. For all $i$, and for every adress $a\sqsubseteq p_i$ such that the node
+of $\tau(\phi)$ at the address $a$ is labelled $\vee$,   we set:
+$$\begin{array}{llll}
+C_s((\phi\vee\psi)_a) & = & \phi_{a.\Al} & \text{ if } a.\Al\sqsubseteq p_i, \\[5pt]
+       & = &  \psi_{a.\Ar} & \text{ otherwise.}
+
+\end{array}$$
+\end{definition}
+
+\begin{example}
+In Example~\ref{ex:successorSubtree}, one has: $C_s((\odot \psi\wedge \mathfrak{p})\vee \odot\delta)_{\Ai\Al})=(\odot X\wedge \mathfrak{p})_{\Ai\Al\Al}$ and $C_s((\mathfrak{q}\vee  \odot\delta)_{\Ai\Ar})=(\odot\delta)_{\Ai\Ar\Ar}$.
+\end{example}
+
+\begin{definition}%[$\Pi_s(\Gamma\vdash F)$]
+Let $F$ be an occurrence, $s\in S(F)$ and $\Gamma$ be a set of occurrences. The derivation  \defname{$\Pi_s(\Gamma\vdash F)$}
+is the \muLKo derivation of conclusion $\Gamma\vdash F$ obtained by applying only the following rules:
+\begin{center}
+\scalebox{.85}{
+$\begin{array}{lll}
+\begin{prooftree}
+\Hypo{\Gamma\vdash F}
+\Hypo{\Gamma\vdash G}
+\Infer{2}[\rconjr]{\Gamma \vdash F\wedge G}
+\end{prooftree}
+&
+\begin{prooftree}
+\Hypo{\Gamma\vdash F[\sigma X. F/X]}
+\Infer{1}[\rsigmar]{\Gamma\vdash \sigma X. F}
+\end{prooftree}
+&
+\begin{prooftree}
+\Hypo{\Gamma\vdash C_s(F\vee G)}
+\Infer{1}[\rweakr]{\Gamma\vdash F, G}
+\Infer{1}[\rdisjr]{\Gamma\vdash F\vee G}
+\end{prooftree}
+\end{array}$}
+\end{center}
+\end{definition}
+
+\begin{example}
+We show in the following the derivation $\Pi_s(\vdash\psi_\epsilon)$, where $s$ and $\psi$ are defined in  Example~\ref{ex:successorSubtree}.
+$$\begin{prooftree}
+\Hypo{\vdash (\odot\psi)_{\Ai\Al\Al\Al}}
+\Hypo{\vdash \mathfrak{p}}
+\Infer{2}[\rconjr]{\vdash (\odot \psi\wedge \mathfrak{p})_{\Ai\Al\Al}}
+\Infer[rulestyle=double]{1}[\rdisjr,\rweakr]{\vdash ((\odot \psi\wedge \mathfrak{p})\vee \odot\delta))_{\Ai\Al}}
+\Hypo{\vdash (\odot\delta)_{\Ai\Ar\Ar}}
+\Infer[rulestyle=double]{1}[\rdisjr,\rweakr]{\vdash (\mathfrak{q}\vee  \odot\delta)_{\Ai\Ar}}
+\Infer{2}[\rconjr]{\vdash ((\odot \psi\wedge \mathfrak{p})\vee \odot\delta)\wedge(\mathfrak{q}\vee  \odot\delta))_{\Ai}}
+\Infer{1}[\rmur]{\vdash \psi_\epsilon}
+\end{prooftree}$$
+\end{example}
+
+The following proposition is traightforward.
+
+\begin{proposition}\label{propAboutPis}
+Let $F$ be a formula occurrence, $s\in S(F)$ and $\Gamma$ be a set of formula occurrences.
+\begin{itemize}
+\item The premisses of  $\Pi_s(\Gamma\vdash F)$ are $\{ \Gamma\vdash G \ \vert \ G\in s \}$.
+\item If $\Gamma\vdash G$ is a premisse of $\Pi_s(\Gamma\vdash F)$ and if $F \overset{s,\psi}{\rightarrow} G$ then the minimum of the thread linking  $F$ to $ G$ in  $\Pi_s(\Gamma\vdash F)$  is $\psi$.
+\end{itemize}
+\end{proposition}
+
+
+\begin{proposition}
+Let $\phi$ be a formula and $\psi^\delta$ be a state of $\C{A}_\phi$. The following rule is derivable in \muLKo using an easy derivation:
+$$\begin{prooftree}
+ \Hypo{\{ \interp{\gamma^{\sigma}}^{\Theta,(\psi^\delta,t)} \vdash (\gamma)_{\alpha.\beta}\}_{s\in S(\psi_\epsilon),\gamma_\beta\in s,  \psi_\epsilon\overset{s,\sigma}{\rightarrow} \Next(\gamma)_{\beta}}}
+      \Infer{1}[]{\interp{\psi^\delta}^\Theta\vdash \psi_\alpha}
+    \end{prooftree}
+$$
+and such that the tread linking $\psi_\alpha$ to $(\gamma)_{\alpha.\beta}$ has a minimum $\sigma$. 
+\end{proposition}
+
+\begin{proof} By definition of $\Delta_\phi$, and by using Remark~\ref{rmq:RelationTransitionAdresse}, one has that: 
+$$
+\begin{array}{c}
+(\psi^\delta,a, \{\psi_1^{\delta_1},\dots,\psi_n^{\delta_n}\})\in \Delta_\phi\\
+\Longleftrightarrow\ \exists s=C,\{\odot(\psi_i)_{\alpha_i}\}^n_{i=1}\in S(\psi_\alpha)\text{ s.t. }a\models \overline{C}\text{ and }\psi_\alpha\overset{s,\delta_i}{\rightarrow} \Next(\psi_i)_{\alpha_i}
+\end{array}
+$$
+Hence, by Proposition~\ref{prop:TransitionAPWInLogic}, we have the following derivation: 
+$$\begin{prooftree}
+ \Hypo{\{ [a], \{ \odot \interp{\psi_i^{\delta_i}}^{\Theta,\psi^\delta}\}^n_{i=1} \vdash \psi_\alpha\}_{s=C,\{\odot(\psi_i)_{\alpha_i}\}^n_{i=1}\in S(\psi_\alpha), \psi_\alpha\overset{s,\delta_i}{\rightarrow} \Next (\psi_i)_{\alpha_i}, a\models\overline{C}}}
+      \Infer[rulestyle=double]{1}[]{\interp{\psi^\delta}^\Theta\vdash \psi_\alpha}
+    \end{prooftree}
+$$
+To justify each of the premisses $[a], \{ \odot \interp{\psi_i^{\delta_i}}^{\Theta,\psi^\delta}\}^n_{i=1} \vdash \psi_\alpha$, we apply
+the derivation $\Pi_s(\Gamma\vdash\psi_\alpha)$, where we set $\Gamma=[a], \{ \odot \interp{\psi_i^{\delta_i}}^{\Theta,\psi^\delta}\}^n_{i=1}$. The derivation
+ $\Pi_s(\Gamma\vdash\psi_\alpha)$ is of the following form:
+$$\begin{prooftree}
+\Hypo{\{\Gamma\vdash F\}_{F\in C}}
+ \Hypo{\{ \Gamma\vdash\odot(\psi_i)_{\alpha_i}\}_{\odot(\psi_i)_{\alpha_i}\in s}}
+      \Infer[rulestyle=double]{2}[\scriptsize{$(\Pi_s(\Gamma\vdash\psi_\alpha))$}]{\Gamma\vdash \psi_\alpha}
+    \end{prooftree}
+$$
+Since $a\models \overline{C}$, one has $\overline{C}\subseteq a$. If $F\in C$, then $F$ is of the form $F=\mathfrak{p}_\beta$ and $[a]$ is of the form $[a]=\mathfrak{p}\wedge G$. We justify the premisses of the form $\Gamma\vdash F$, where $F\in C$ as follows:
+$$\begin{prooftree}
+  \Hypo{}
+      \Infer[rulestyle=double]{1}[\rconjl, \rax]{[a]\vdash F}
+      \Infer{1}[\rweakl]{\Gamma\vdash F}
+    \end{prooftree}
+$$
+and the premisses of the form $\Gamma\vdash\odot(\psi_i)_{\alpha_i}$ as follows:
+$$\begin{prooftree}
+  \Hypo{\interp{\psi_i^{\delta_i}}^{\Theta,\psi^\delta}\vdash (\psi_i)_{\alpha_i}}
+      \Infer{1}[\rnext]{\odot \interp{\psi_i^{\delta_i}}^{\Theta,\psi^\delta}\vdash \odot(\psi_i)_{\alpha_i}}
+      \Infer{1}[\rweakl]{\Gamma\vdash \odot(\psi_i)_{\alpha_i}}
+    \end{prooftree}
+$$
+By using Proposition~\ref{propAboutPis}, one has that the tread linking $\psi_\alpha$ to $(\psi_i)_{\alpha_i}$ has a minimum $\delta_i$.
+\end{proof}
+
+\begin{theorem}
+The sequent $\interp{\C{A}_\phi}\vdash \phi_\epsilon$ has a proof in $\muLK$.
+\end{theorem}
+
+

@@ -1,0 +1,273 @@
+\section{Proposed Research and its Context}
+
+\subsection{Background}
+
+\textbf{The Curry-Howard correspondence.}
+Traditionally, proofs are a tool used to establish the validity
+of mathematical statements. 
+%
+Proofs  have been generally  compared at an aestethic/concision level, but
+were not considered as a proper object of study. The focus was in provability
+ not in the proofs themselves.
+%
+This situation have changed in the 60's, where we descovered a deep link between proofs and programs. This link is known as the \textit{Curry-Howard Correspondence}.
+%
+\mytodo{Recall this correspondence.}
+ 
+
+  Over time, the meaning of the Curry-Howard correspondence has evolved from
+  the simple observation of an isomorphism between an existing
+  proof system and an existing programming language, to something more “productive”.
+Indeed, one can either start from a typed programming language and extract its isomorphic proof system which may have an interesting logical meaning.
+Conversely, one could start from a known proof system and try to understand its computational content
+in order to design its
+  corresponding programming language,
+  this is for instance how a number of calculi were  born~\cite{Parigot92,CurienH00, Munch09Foc}.
+
+  Curry-Howard was also productive in renewing questions related to the
+  semantics of logic, putting an emphasis on the semantics of proofs, in contrast to tranditional thruth or provability semantics. 
+    
+\bigskip 
+  \textbf{Fixed points logics} are those logics containing two special connectives: the connective $\mu$ and its dual $\nu$. A formula of the form $\mu X. F$ (resp. $\nu X. F$) can be understood as the “least (resp. greatest) fixed points of the operator  $X\mapsto F(X)$”.
+  
+Least and greatest fixed points allow to treat in a direct, generic and intuitive way data (natural numbers, lists, etc) and co-data (streams, infinite trees, etc). The least fixed point operator $\mu$ allows to define
+finite data types such as natural numbers,  lists, finite trees, etc.
+Dually, the greatest fixed point operator allow to
+define infinite data types (called co-data), such as streams, infinite trees, etc.
+
+
+\bigskip
+\textbf{Proof systems for logics with fixed points.}
+
+There are two main families of proof systems with fixed points: finitary proof
+systems with explicit rules of (co)induction and infinitary proof systems. 
+
+\begin{itemize}
+\item{Finitary proof systems.} In these proof systems, the induction  principle
+is reflected by an  explicit rule, called \textbf{Park's rule}. Let us recall that the induction principle
+is based on the characterization of the least fixed point of an operator $X\mapsto F(X)$, $\mu X. F$,
+as its least pre-fixed point. This means that:
+\begin{enumerate}
+\item[i)] $\mu X. F$ is a pre-fixed point, \ie $F(\mu X. F)\leq \mu X. F$.
+\item[ii)] $\mu X. F$ is smaller than any other pre-fixed point $S$ of $F$:
+$$F(S)\leq S  \Rightarrow \mu X. F\leq S.$$
+\end{enumerate}
+These two points yield respectively the following two rules for the $\mu$ connective:
+$$
+\begin{array}{ll}
+\begin{prooftree}
+\Hypo{\Delta \vdash F[\mu X. F/X], \Gamma}
+\Infer{1}[\rmur]{\Delta \vdash \mu X. F, \Gamma}
+\end{prooftree}
+&
+
+  \begin{prooftree}
+\Hypo{ F[S/X]\vdash S}
+\Infer{1}[\rmul]{\mu X. F \vdash S}
+\end{prooftree}
+
+\end{array}
+$$
+Dually, the coinduction principle, based on the
+characterization of the greatest fixed point of an operator as its
+greatest post-fixed point, yields the following two rules:
+$$
+\begin{array}{cc}
+\begin{prooftree}
+\Hypo{S \vdash  F[S/X]}
+\Infer{1}[\rnur]{S\vdash \nu X. F}
+\end{prooftree}
+&
+\begin{prooftree}
+\Hypo{ \Delta, F[\nu X. F/X] \vdash \Gamma}
+\Infer{1}[\rnul]{\Delta, \nu X. F \vdash \Gamma}
+\end{prooftree}
+\end{array}
+$$
+%This way of treating fixed points in proof systems is the most popular.
+The problem of these rules is that, in general, the cut rule is not admissible in
+the proof systems using them. To recover cut-elimination, the following  variant of the rules  $\rmul$ and $\rnur$,
+containing a  “hidden cut”, are usually used instead:
+$$\begin{prooftree}
+\Hypo{\Gamma\vdash S, \Delta}
+\Hypo{ S \vdash F[S/X]}
+\Infer{2}[\rnu]{\Gamma \vdash \nu X. F, \Delta}
+\end{prooftree}
+$$
+$$
+\begin{prooftree}
+  \Hypo{F[S/X]\vdash S}
+  \Hypo{\Gamma, S \vdash \Delta}
+  \Infer{2}[\rmur]{\Gamma, \mu X. F \vdash\Delta}
+\end{prooftree}
+$$
+\medskip
+The fact that the cut rule is unavoidable (either in an explicit or a hidden way) means that proof systems with explicit rules of induction are fundamentally not suited
+to proof-search, and that there is very little we can do to fix that. 
+An other drawback of proofs using explicit induction  is that their computational meaning is usually
+not explicit: it is hard to tell what
+such proofs compute, when two proofs compute the same function, etc.
+
+\item{Infinitary proof systems.} These systems are obtained by using, 
+instead of the Park's rules $\rnur$ and $\rmul$, the following
+unfolding rules:
+$$\begin{prooftree}
+\Hypo{ \Gamma\vdash F[\nu X. F/X], \Delta}
+\Infer{1}[\rnur]{\Gamma\vdash \nu X. F, \Delta}
+\end{prooftree}
+\quad
+\begin{prooftree}
+\Hypo{ \Gamma, F[\mu X. F] \vdash \Delta}
+\Infer{1}[\rmul]{\Gamma, \mu X. F \vdash \Delta}
+\end{prooftree}
+$$
+and allowing infinite derivation trees, called \textbf{pre-proofs}.
+Clearly, these rules do not reflect the difference in nature
+between $\mu$ and $\nu$. More importantly, these pre-proofs are unsound, since one can derive the empty sequent as follows:
+$$
+\begin{prooftree}
+\Hypo{\vdots}
+\Infer{1}[\rmur]{\vdash \mu X. X}
+\Infer{1}[\rmur]{\vdash \mu X. X}
+\Hypo{\vdots}
+\Infer{1}[\rmul]{ \mu X. X\vdash}
+\Infer{1}[\rmul]{ \mu X. X\vdash}
+\Infer{2}[\rcut]{\vdash }
+\end{prooftree}
+$$
+To get a proof system which is sound, we declare a pre-proof to be a proof
+if and only if it satisfies the \textbf{validity condition}. This condition says, roughly speaking, that in every infinite branch there should be either a least fixed point unfolded infinitely often in the left  or a greatest fixed unfolded infinitely often in the right.
+
+There is a natural restriction to infinitary proofs given by regular proofs, that is, proofs that have only
+finitely many sub-trees. These proofs are called \textbf{circular proofs}, since they can be represented
+as finite trees with loops. This restricted \textbf{cyclic proof system} is more suited for a computer
+science use, as its proofs can be finitely represented and manipulated.
+\end{itemize}
+
+\bigskip
+Infinitary and circular  proof systems have existed for a long time, but in the shadows, and more as technical
+tools than as proper proof systems. Indeed, their infinitary nature makes them suitable intermediary objects between the syntax and the semantics, so that we usually find them in
+completeness proofs. This is the case, for instance, with the
+\mucalculus \textbf{refutations} of Niwinski and Walukiewicz~\cite{NiwinskiW96}, which are used as an intermediary proof system in Walukiewicz's proof of completeness of the \mucalculus with respect to Kozen's
+axiomatization~\cite{Waluk95}.
+
+In the last decades, infinitary proof systems have started to come out from the shadows and have begun to be considered as proper proofs (Dam and Gurov~\cite{DamG02},  Dax \textit{et al.}~\cite{dhl06}. Santocanale ~\cite{santoCircularProofs}. Brotherston~\cite{}, QuodLibet~\cite{AvenhausKSW03}, $\dots$)
+
+\medskip
+Despite their compelling interest,
+few proof-theoretical investigations have been done about infinitary proof theory (cut-elimination, focalization, $\dots$). 
+
+
+
+
+\subsection{Research hypothesis and objectives}
+
+\subsection{National importance}
+
+\subsection{Programme and methodology}
+
+\subsubsection{Task A: Circular functional programs}
+
+\begin{itemize}
+\item \textbf{Long term objective:} Design typed functional programming languages for (co)-inductive data-types based on circular type systems.
+
+  \bigskip
+The use of circular proofs as type systems represents a promising new
+method of writing (co)inductive programs, at least from the three following perspectives:
+  
+\begin{enumerate}
+\item The programs are easier to write, more user-friendly. Indeed, there are no invariants to guess.
+\item It is known that every finitary proof can be transformed into a circular one, but the converse is still an open question (cf Task B).
+Circular proofs may then contain ``more proofs'' and using circular type systems may allow us to write more programs.
+  \item Another interesting feature of the infinitary proofs is that their computational meaning is more explicit compared to finitary proof systems.
+  \mytodo{Add an example in the background section to argument that?}
+\end{enumerate}
+
+  
+\item \textbf{Short/Mid-term objective:} Before realizing this long term objective, one needs to ensure that the circular type sytems
+  enjoy the usual fundamental properties, normalization for instance.
+
+  A step in this direction has been done by the second author and \textit{al.},  who showed cut-elimination for circular proofs in the setting of sequent calculus~\cite{}. It has been shown initially for multiplicative addivite linear-logic \MALL, but have been extended to other logics (\LL, \LK, \LJ).
+
+
+  The translation between sequent calculus and
+natural deduction is usually immediate in the finitary case. In the infinitary and the circular
+setting, this is not the case anymore.
+
+
+ Since circular typing systems  are usually in correspondence with the
+formalism of natural deduction rather than with sequent calculus one, 
+showing their normalization is not a corrolary of the second author's result.
+Thus we have for this direction two short/mid-term objectives:
+  \begin{enumerate}
+  \item Define properly  a validity condition for natural deduction circular proofs.
+    \item Show normalization.
+    \end{enumerate}
+
+  \end{itemize}
+
+  \mytodo{We started working on that with David Baelde, Alexis Saurin and
+  Guilhem Jaber, can we explicitely cite them as collaborators for this work direction?}
+\subsubsection{Task B: The expressive power of circular proofs}
+
+
+The question of relating the finitary proof systems with explicit (co)induction rules and the circular proof systems is a hard question.
+
+It has been already set as a conjecture in similar settings, for instance
+by Brotherston and Simpson~\cite{BrotherstonS07} in the framework of classical first-order logic with definitions.  
+
+
+We can ask this question at two levels: at the level of \textbf{provability}
+and at the level of \textbf{computational power}.  Before discussing these two work directions,
+let us set up some notations.
+
+\begin{notation}
+  Let \Sys be a proof system for a logic \textit{without} fixed points.
+  We denote by \muS the finitary proof system obtained from \Sys by adding
+  the explicite (co)induction rules.
+
+  We denote by \muSi the infinitary proof system obtained from \Sys by adding
+  the unfolding rules for the fixed points and considering as proofs the
+  infinite derivations satisfying the validity condition.
+
+  We denote by \muSo the circular proof system obtained by restricting
+  the proofs of \muSi to the regular ones. 
+\end{notation}
+
+\bigskip
+For this task, we have two main research directions:
+\begin{itemize}
+\item \textbf{Relating the finitary and the circular proof systems at the level of provability:}
+For a given proof system \Sys, does the proof systems \muS and \muSo prove the same theorems?
+
+\medskip
+In ~\cite{DoumanePhD}, this question has been partially answered by showing that every provable sequent in \muS is also provable in \muSo. The converse in more difficult, and ~\cite{DoumanePhD} provide only a sufficient condition on the
+proof system \muS and \muSo (the invariant property) and a condition on the circular proofs to be translated (the translatability criterion) which guarantees that they can be indeed transformed into finitary proofs.
+
+\bigskip
+If the answer to this problem happens to be positive,  we see two ways to proceed:
+\begin{itemize}
+\item Either by finding a semantics of formulas, common to both \muS and \muSo. The idea is to show soundness for \muSo (that is, if a formula
+  is provable in \muS then it is valid \wrt this semantics) and completeness for \muS (that is, if a formula is valid then it is provable in \muSo). This is the approach taken by Brotherstone and Simpson~\cite{BrotherstonS07}.
+\item Or by using combinatorial techniques, that is by showing a translation procedure that transforms \muSo proofs into \muS ones. This is the approach adopted in \cite{DoumanePhD}. It has the advantage of being constructive by essence. 
+\end{itemize}
+
+
+Recently, the conjecture of Brotherston and Simpson has been 
+ been answered by Berard and Tatsuta~\cite{BerardiT17} and by Alex Simpson~\cite{Simpson2017}.
+
+
+
+\item \textbf{Relating the finitary and the circular proof systems at the level of computational power:}
+For a given proof system \Sys, do the proof systems \muS and \muSo denote the same set of programs. 
+
+If the answer happens to be positive, a way to proceed is by using \textbf{proof semantics}. 
+For that, we have to find a domain of interpretation for proofs, common to both \muS and \muSo.
+If we denote by $\interp{\pi}$, the interpretation of a \muS or a \muSo proof
+$\pi$, this problem can be reformulated as follows:
+For every proof $\Pi$ of \muSo (resp. \muS), is there a \muS (resp. \muSo) proof $\pi$ such that
+$\interp{\Pi}=\interp{\pi}$?
+
+An example of such proof semantics is computational ludics, which was used by the second author to compare the  \muMALLP and
+\muMALLPo, the finitary and the circular extensions of polarized linear logic \MALLP.
+\end{itemize}
