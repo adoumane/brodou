@@ -271,3 +271,66 @@ $\interp{\Pi}=\interp{\pi}$?
 An example of such proof semantics is computational ludics, which was used by the second author to compare the  \muMALLP and
 \muMALLPo, the finitary and the circular extensions of polarized linear logic \MALLP.
 \end{itemize}
+
+\noindent {\bf (C):} \emph{Cyclic proof for mixed induction and
+coinduction.}
+
+Having previously developed cyclic proof systems for (program)
+logics with inductive constructs, it is of clear interest to to
+extend our methodology to logics featuring coinductive
+structures, e.g., bisimilarity relations as widely used in
+concurrency theory.  Our first step will be to formulate and
+analyse a cyclic proof system for coinduction.  Since
+coinductive proof often takes a circular form based on a simple
+guardedness condition, it would also be interesting to compare
+our proof machinery with these established forms.  Having
+already considered cyclic proof for induction, we believe
+dualising the concepts to coinduction should be fairly
+straightforward, so the obvious next step is to consider logics
+featuring mixed inductive and coinductive structures.  The more
+complex soundness condition likely to be needed in the presence
+of mixed induction and coinduction, taking into account the
+possible nesting of least and greatest fixed points, is
+suggested by the work of Niwinski and Walukiewicz on
+refutations in the
+$\mu$-calculus~\cite{Niwinski-Walukiewicz:97}. Having
+formulated proof systems for mixed induction and coinduction,
+the secondary research goals are analogous to those previously
+achieved for the preceding systems for induction: the
+translation of proofs featuring explicit uses of induction and
+coinduction into cyclic proofs; and appropriate completeness
+results for the associated infinitary systems.  (We suspect
+that completeness will be non-trivial to establish, since in
+the case of Niwinski and
+Walukiewicz~\cite{Niwinski-Walukiewicz:97}, the set-theoretic
+property of Borel determinacy is required.)  \\
+
+\noindent {\bf (D):} \emph{Cyclic proof in other program
+logics.}
+
+Finally, it is also of interest to consider the potential for
+cyclic proof in the setting of other program logics than the
+frameworks considered in the strands above.  For example, one
+could consider frameworks in which the syntax of the
+programming language under consideration is separated from an
+overlying logic, e.g.\,Plotkin's PCF language~\cite{Plotkin:77}
+with LCF as the logic, or the pure-functional fragment of ML
+with an appropriate logic. In such settings, cyclicity together
+with an appropriate guardedness condition would presumably
+replace or complement the usual structural induction principles
+for the inductive datatypes of the language.
+
+One could also investigate frameworks in which the programming
+language and logic are combined in a dependent type theory.
+Cyclic proof within such a framework would very likely take the
+form of a construct for general recursion with appropriate
+restrictions on its application, which would replace the usual
+fixed recursion constructors for inductive types within the
+theory.  Correctness would be ensured by proving a restricted
+normalization result sufficient to ensure logical consistency,
+and also by proving that closed terms of inductive type reduce
+to canonical form (i.e.\,the type theory correctly models
+datatypes).
+
+
+
