@@ -58,6 +58,32 @@ The UCL Dept.\ of Computer Science is well known as a leading centre for compute
 
 \section{Proposed Research and its Context}
 
+\subsection{Proposition of a high level view of the project}
+
+\begin{itemize}
+\item Logic has been succesfully applied in many domains of computer science. In particular in the domains of \textbf{verification} and \textbf{programming laguages}:
+  \begin{itemize}
+  \item In verification: formulas-as-specifications, proofs-as-certificates. 
+    \item In programming languages: formulas-as-types, proofs-as-programs
+    \end{itemize}
+\item Fixed points logics are crucial in both verification and programming languages:
+  \begin{itemize}
+  \item In verification: we can express a wide range of properties using fixed points.
+   \item In PL: program with (co-)inductive data types 
+  \end{itemize}
+\item Two main families of proof systems for logics with fixed points
+  \begin{itemize}
+  \item Finite proofs with explicite (co-)induction rules. Widely used but with many drawbacks.
+  \item Circular proofs. Not very well-explored yet very promising.
+  \end{itemize}
+\item \textbf{Our goal} is to develop:
+  \begin{itemize}
+  \item Theorem provers (allowing certificate production)
+  \item Typed programming languages 
+  \end{itemize}
+  based on circular proofs.
+\end{itemize}
+
 \subsection{Background}
 
 Good methods for reasoning with general inductive predicates have the potential to greatly boost the automation and coverage of such automatic verification tools.
