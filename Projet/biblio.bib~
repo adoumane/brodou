@@ -7,6 +7,14 @@
   year   = {2002}
 }
 
+@PhDThesis{DoumanePhD,
+  author = {Amina Doumane},
+  title  = {On the proof theory of logics with fixed points},
+  school = {{U}niversit\'e Paris Diderot},
+  type   = {Th\`ese de Doctorat},
+  month  = June,
+  year   = {2017}
+}
 
 @article{Gentzen35,
 author = {Gentzen, G.},
