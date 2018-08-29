@@ -1,9 +1,0 @@
-\documentclass[10pt,conference,short]{IEEEtran}
-
-\input{packages}
-
-\input{thm}
-
-\input{macros}
-
-\input{SECTIONS}
