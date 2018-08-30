@@ -218,7 +218,7 @@ Our goal is to find conditions with a more semantic flavour, capable of pinpoint
 \begin{center}
 \begin{bclogo}[logo= ,arrondi = 0.1, couleur = green!10,  epBarre = 0]{}
   \vspace{-10pt}
-  \textbf{Problem 4.}
+  \textbf{Problem 1.}
   
   Equip Coq with more flexible conditions which guarantee productivity. 
 \end{bclogo}
@@ -265,7 +265,7 @@ arbitrary finite data structures. Our goal is to go further, and verify specific
 \begin{center}
 \begin{bclogo}[logo= ,arrondi = 0.1, couleur = green!10,  epBarre = 0]{}
   \vspace{-10pt}
-  \textbf{Problem 5.}
+  \textbf{Problem 2.}
   
   Extend Brotherston's results to verify specifications in separation logic with induction and coinduction.
 \end{bclogo}
@@ -287,13 +287,12 @@ We can find tools for deductive verification for LTL and CTL (The Stanford Tempo
 \begin{center}
 \begin{bclogo}[logo= ,arrondi = 0.1, couleur = green!10,  epBarre = 0]{}
   \vspace{-10pt}
-  \textbf{Problem 6.}
+  \textbf{Problem 3.}
   
   Develop tools based on circular proofs to verify specifications in $\mu$-calculus.
 \end{bclogo}
 \end{center}
-
-Another direction which combines Problem 5 and 6 consists in verifying temporal properties of programs manipulating memory. This requires conceiving proof systems for logics combining separation operators, temporal operators and fixed points. Here again, fixed points allowed Brotherston to develop a tool  \cite{TellezB17} to verify properties for CTL extended with formulae in separation logic. Our goal is to generalize this work to verify properties in $\mu$-calculus with separation operator.
+Another direction which combines Problem 2 and 3 consists in verifying temporal properties of programs manipulating memory. This requires conceiving proof systems for logics combining separation operators, temporal operators and fixed points. Here again, fixed points allowed Brotherston to develop a tool  \cite{TellezB17} to verify properties for CTL extended with formulae in separation logic. Our goal is to generalize this work to verify properties in $\mu$-calculus with separation operator.
 
 \subsection{Comparing reasoning methods: (co)induction vs infinite descent}
 
@@ -307,7 +306,7 @@ Since circular and finite proof systems model infinite descent and proof by (co)
 \begin{center}
 \begin{bclogo}[logo= ,arrondi = 0.1, couleur = green!10,  epBarre = 0]{}
   \vspace{-10pt}
-  \textbf{Problem 1.}
+  \textbf{Problem 4.}
 Are infinite descent and (co)inductive reasoning able to prove the same statements?
 
   %\vspace{5pt}
@@ -321,13 +320,13 @@ It is only very recently that Tatsuta and Berardi \cite{BerardiT17fossacs, Berar
 
 
 \smallskip
-Problem 1 contains two implications. The first (infinite descente reasoning subsumes (co)inductive reasoning) is already solved. Indeed, I showed during my thesis how to transform every finitary proof into a circular one. The converse is much more difficult, since we have to extract from the cycles of the proofs the appropriate information to recover the invariants to use in the (co)induction rules. This is precisely where the difficulty of the Brotherston-Simpson conjecture comes from.
+Problem 4 contains two implications. The first (infinite descente reasoning subsumes (co)inductive reasoning) is already solved. Indeed, I showed during my thesis how to transform every finitary proof into a circular one. The converse is much more difficult, since we have to extract from the cycles of the proofs the appropriate information to recover the invariants to use in the (co)induction rules. This is precisely where the difficulty of the Brotherston-Simpson conjecture comes from.
   
 
 
 \paragraph{Constructive completeness}
 
-We are particularly interested in the way Problem 1 could be proved. 
+We are particularly interested in the way Problem 4 could be proved. 
 Indeed, we want to find \textbf{algorithms} that transform the proofs using one mode of reasoning into the other mode. This could help us to obtain \textbf{constructive completeness proofs} for finitary proof systems.
 
 
@@ -349,13 +348,13 @@ i) every valid formula is provable in the circular proof system, ii) every formu
 \end{figure*}
 
 The interest of this proof schema is that it allows proofs of completeness which are ``constructive'', meaning that they do not only establish that every valid formula is provable, but they also give a concrete proof of this formula. Indeed, circular proof systems are more adapted to proof search, thus it is generally easier to  \textbf{construct}
-a circular proof for each valid formula. It is then enough to transform the obtained proof into a proof of the target proof system using the algorithms that we hope to obtain by solving Problem 1.
+a circular proof for each valid formula. It is then enough to transform the obtained proof into a proof of the target proof system using the algorithms that we hope to obtain by solving Problem 4.
   
 
 \begin{center}
 \begin{bclogo}[logo= ,arrondi = 0.1, couleur = green!10,  epBarre = 0]{}
   \vspace{-10pt}
-  \textbf{Problem 2.}
+  \textbf{Problem 5.}
 
 Show completeness in a constructive way using circular proofs. 
   %\vspace{5pt}
@@ -374,7 +373,7 @@ of programs. Another question that arises naturally is to find wich class of pro
 \begin{center}
 \begin{bclogo}[logo= ,arrondi = 0.1, couleur = green!10,  epBarre = 0]{}
   \vspace{-10pt}
-  \textbf{Problem 3.}
+  \textbf{Problem 6.}
 
 Do circular and finitary proof systems have the same computational content?
 \end{bclogo}
@@ -385,7 +384,7 @@ Comparing the provability power and the computational power of  circular and fin
 
 \smallskip
 
-Answering Problem 3 necessarily goes through the study of the cut-elimination property.
+Answering Problem 6 necessarily goes through the study of the cut-elimination property.
 Showing this property in a circular/infinitary setting will probably require new proof techniques. Indeed, proofs of cut-elimination usually proceeds by induction on the proof, or at least rely on the fact that they are finite objects. 
 My PhD work opens some ways in this direction, but now the question is: can we generalize these ideas to other frameworks? To other kind of proof systems such as natural deduction? 
 
