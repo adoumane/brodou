@@ -1,0 +1,78 @@
+\begin{thebibliography}{10}
+
+\bibitem{baelde16csl}
+David Baelde, Amina Doumane, and Alexis Saurin.
+\newblock Infinitary proof theory: the multiplicative additive case.
+\newblock In {\em {CSL} 2016, August 29 - September 1, 2016, Marseille,
+  France}.
+
+\bibitem{BerardiT17fossacs}
+Stefano Berardi and Makoto Tatsuta.
+\newblock Classical system of martin-l{\"{o}}f's inductive definitions is not
+  equivalent to cyclic proof system.
+\newblock In Esparza and Murawski \cite{DBLP:conf/fossacs/2017}, pages
+  301--317.
+
+\bibitem{BerardiT17lics}
+Stefano Berardi and Makoto Tatsuta.
+\newblock Equivalence of inductive definitions and cyclic proofs under
+  arithmetic.
+\newblock In {\em 32nd Annual {ACM/IEEE} Symposium on Logic in Computer
+  Science, {LICS} 2017, Reykjavik, Iceland, June 20-23, 2017}, pages 1--12.
+  {IEEE} Computer Society, 2017.
+
+\bibitem{BerdineCO05}
+Josh Berdine, Cristiano Calcagno, and Peter~W. O'Hearn.
+\newblock Smallfoot: Modular automatic assertion checking with separation
+  logic.
+\newblock In {\em {FMCO}}, volume 4111 of {\em Lecture Notes in Computer
+  Science}, pages 115--137. Springer, 2005.
+
+\bibitem{CalcagnoDOY11}
+Cristiano Calcagno, Dino Distefano, Peter~W. O'Hearn, and Hongseok Yang.
+\newblock Compositional shape analysis by means of bi-abduction.
+\newblock {\em J. {ACM}}, 58(6):26:1--26:66, 2011.
+
+\bibitem{DistefanoOY06}
+Dino Distefano, Peter~W. O'Hearn, and Hongseok Yang.
+\newblock A local shape analysis based on separation logic.
+\newblock In {\em {TACAS}}, volume 3920 of {\em Lecture Notes in Computer
+  Science}, pages 287--302. Springer, 2006.
+
+\bibitem{doumane16lics}
+Amina Doumane, David Baelde, Lucca Hirschi, and Alexis Saurin.
+\newblock Towards completeness via proof search in the linear time
+  {\(\mu\)}-calculus: The case of b{\"{u}}chi inclusions.
+\newblock In {\em Proceedings of the 31st Annual {ACM/IEEE} Symposium on Logic
+  in Computer Science, {LICS} '16, New York, NY, USA, July 5-8, 2016}, pages
+  377--386, 2016.
+
+\bibitem{DBLP:conf/fossacs/2017}
+Javier Esparza and Andrzej~S. Murawski, editors.
+\newblock {\em Foundations of Software Science and Computation Structures -
+  20th International Conference, {FOSSACS} 2017, Held as Part of the European
+  Joint Conferences on Theory and Practice of Software, {ETAPS} 2017, Uppsala,
+  Sweden, April 22-29, 2017, Proceedings}, volume 10203 of {\em Lecture Notes
+  in Computer Science}, 2017.
+
+\bibitem{Reynolds2002}
+John~C. Reynolds.
+\newblock Separation logic: A logic for shared mutable data structures.
+\newblock In {\em Proceedings of the 17th Annual IEEE Symposium on Logic in
+  Computer Science}, LICS '02, pages 55--74, Washington, DC, USA, 2002. IEEE
+  Computer Society.
+
+\bibitem{Simpson17fossacs}
+Alex Simpson.
+\newblock Cyclic arithmetic is equivalent to peano arithmetic.
+\newblock In Esparza and Murawski \cite{DBLP:conf/fossacs/2017}, pages
+  283--300.
+
+\bibitem{TellezB17}
+Gadi Tellez and James Brotherston.
+\newblock Automatically verifying temporal properties of pointer programs with
+  cyclic proof.
+\newblock In {\em {CADE}}, volume 10395 of {\em Lecture Notes in Computer
+  Science}, pages 491--508. Springer, 2017.
+
+\end{thebibliography}

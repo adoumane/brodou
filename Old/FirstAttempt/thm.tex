@@ -1,0 +1,113 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% STYLES  -- POUR LNCS
+
+%\theoremstyle{plain} %style standard
+
+% [David] Je commente tout ça...
+% Pourquoi avoir theorm & co en plus des environnements theorem
+% "normaux" (qu'on peut customiser de toute façon si on le souhaite
+% vraiment) ?
+%
+%\newtheorem{theorm}{Theorem}[section]
+%\newtheorem{propositin}[theorm]{Proposition}
+%\newtheorem{definitin}[theorm]{Definition}
+%\newtheorem{lema}[theorm]{Lemma}
+%\newtheorem{corollay}[theorm]{Corollary}
+%
+%français
+%\newtheorem{theorèe}[theorm]{Théorème}
+%\newtheorem{définitin}[theorm]{Définition}
+%\newtheorem{leme}[theorm]{Lemme}
+%\newtheorem{corollaie}[theorm]{Corollaire}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% FONCTIONS
+\def\upcase{\expandafter\makeupcase}
+\def\makeupcase#1{\uppercase{#1}}
+
+\newcommand{\optname}[1]{\ifthenelse{\equal{#1}{}}{}{\textbf{\upcase#1.}}}
+
+
+%\newcommand{\preuve}[1]{\vspace{-5mm}\proof{#1}\qed}
+%\newcommand{\preuve}[1]{}
+\newcommand{\preuve}[1]{
+\begin{proof}
+#1 % \qed % Qed is part of proof env
+\end{proof}}
+
+
+%\newcommandx{\theorem}[2][1=]{
+%\vbox{
+%	\begin{theorm}\optname{#1}
+%		#2
+%	\end{theorm}
+%	}
+%}
+
+%\newcommandx{\theoreme}[2][1=]{
+%\vbox{
+%	\begin{theorm}\optname{#1}
+%		#2
+%	\end{theorm}
+%	}
+%}
+
+
+%\newcommandx{\proposition}[2][1=]{
+%\vbox{
+%	\begin{propositin}#1
+%		#2
+%	\end{propositin}
+%	}
+%}
+
+
+%\newcommandx{\define}[2][1=]{
+%\vbox{
+%	\begin{definitin}\optname{#1}
+%		#2
+%	\end{definitin}
+%	}
+%}
+
+%\newcommandx{\definition}[2][1=]{
+%%\vbox{
+%	\begin{définitin}\optname{#1}
+%		#2
+%	\end{définitin}
+%%	}
+%}
+
+
+%\newcommandx{\lemma}[2][1=]{
+%\vbox{
+%	\begin{lema}\optname{#1}
+%		#2
+%	\end{lema}
+%	}
+%}
+
+%\newcommandx{\lemme}[2][1=]{
+%\vbox{
+%	\begin{leme}\optname{#1}
+%		#2
+%	\end{leme}
+%	}
+%}
+
+
+%\newcommandx{\corollary}[2][1=]{
+%\vbox{
+%	\begin{corollay}\optname{#1}
+%		#2
+%	\end{corollay}
+%	}
+%}
+
+%\newcommandx{\corollaire}[2][1=]{
+%\vbox{
+%	\begin{corollaie}\optname{#1}
+%		#2
+%	\end{corollaie}
+%	}
+%}

@@ -1,0 +1,56 @@
+\begin{thebibliography}{DBHS16}
+
+\bibitem[BBC08]{BBC08}
+J.~Brotherston, R.~Bornat, and C.~Calcagno.
+\newblock Cyclic proofs of program termination in separation logic.
+\newblock In {\em POPL-35}, pages 101--112. ACM, 2008.
+
+\bibitem[BDS]{baelde16csl}
+David Baelde, Amina Doumane, and Alexis Saurin.
+\newblock Infinitary proof theory: the multiplicative additive case.
+\newblock In {\em {CSL} 2016, August 29 - September 1, 2016, Marseille,
+  France}.
+
+\bibitem[BK14]{BK14}
+James Brotherston and Max Kanovich.
+\newblock Undecidability of propositional separation logic and its neighbours.
+\newblock {\em JACM}, 61(2):14:1--14:43, April 2014.
+
+\bibitem[Bro05]{Bro05}
+James Brotherston.
+\newblock Cyclic proofs for first-order logic with inductive definitions.
+\newblock In {\em TABLEAUX-14}, volume 3702 of {\em LNAI}, pages 78--92.
+  Springer-Verlag, 2005.
+
+\bibitem[BS11]{BS11}
+James Brotherston and Alex Simpson.
+\newblock Sequent calculi for induction and infinite descent.
+\newblock {\em JLC}, 21(6):1177--1216, December 2011.
+
+\bibitem[BV14]{BV14}
+James Brotherston and Jules Villard.
+\newblock Parametric completeness for separation theories.
+\newblock In {\em POPL-41}, pages 453--464. ACM, 2014.
+
+\bibitem[DBHS16]{doumane16lics}
+Amina Doumane, David Baelde, Lucca Hirschi, and Alexis Saurin.
+\newblock Towards completeness via proof search in the linear time
+  {\(\mu\)}-calculus: The case of b{\"{u}}chi inclusions.
+\newblock In {\em Proceedings of the 31st Annual {ACM/IEEE} Symposium on Logic
+  in Computer Science, {LICS} '16, New York, NY, USA, July 5-8, 2016}, pages
+  377--386, 2016.
+
+\bibitem[Dou17]{doumane17lics}
+Amina Doumane.
+\newblock Constructive completeness for the linear-time {\(\mu\)}-calculus.
+\newblock In {\em 32nd Annual {ACM/IEEE} Symposium on Logic in Computer
+  Science, {LICS} 2017, Reykjavik, Iceland, June 20-23, 2017}, pages 1--12.
+  {IEEE} Computer Society, 2017.
+
+\bibitem[DP18]{doumaneP18concur}
+Amina Doumane and Damien Pous.
+\newblock Completeness for identity free kleene lattices.
+\newblock In {\em 29th International Conference on Concurrency Theory, {CONCUR}
+  2018, September 4-7, 2018, Beijin, China}, 2018.
+
+\end{thebibliography}

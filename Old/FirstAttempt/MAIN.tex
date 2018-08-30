@@ -1,0 +1,181 @@
+\documentclass[11pt,twocolumn]{article}
+
+\usepackage[margin=2cm]{geometry}
+\usepackage{multibib}
+\newcites{track}{Selected publications by the team}
+\newcites{biblio}{References}
+\usepackage{gastex}
+%\usepackage{prooftree}
+\newcommand{\cyclist}{\textsc{Cyclist}}
+
+\input{packages}
+
+\input{thm}
+
+\input{macros}
+
+
+
+\begin{document}
+
+\twocolumn[
+\centerline{\Large A Curry-Howard Perspective On Cyclic Proofs: Case for Support} \vspace{0.3cm}
+\centerline{James Brotherston (PI) and Amina Doumane (RCI)}
+\centerline{Dept. of Computer Science, University College London}
+\vspace{0.8cm}
+]
+
+
+\begin{abstract}
+  \input{1-Abstract.tex}
+\end{abstract}
+
+\subsection*{1\quad Previous Research Track Record}
+
+{\bf James Brotherston} is a Reader in Logic and Computation in the Dept.\ of Computing at University College London (UCL), where he is a member of the Programming Principles, Logic and Verification (PPLV) research group.  Brotherston holds a PhD from the School of Informatics, University of Edinburgh 2006.  He was a postdoctoral researcher at Imperial College London from 2006--11 before taking up a lectureship at Queen Mary University of London, moving to UCL in 2012. He has held as PI grants worth more than $\pounds$1M in total to date, including an EPSRC Postdoctoral Fellowship (2008--11) and an EPSRC Career Acceleration Fellowship (2011--16). He is the author of 29 conference and journal papers, with an $h$-index of $17$.
+
+Brotherston's main research interests lie in mathematical logic and its application to computer science, particularly in automated program verification. He is especially well known for his pioneering work on \emph{cyclic proof} (see e.g.~\citetrack{BS11,BBC08,Bro05}) and also for his work in \emph{separation logic} (see e.g.~\citetrack{BK14,BV14}).  \\
+
+\noindent {\bf Amina Doumane}  is a post-doctorate fellow working in Warsaw university with Mikolaj Bojanszyk and in the
+LIP Computer Science laboratory at Ecole Normale
+Supérieur (ENS) Lyon with Damien Pous.
+% where she is a member of the roofs and Languages (PLUME) team, headed by Professor Russ Harmer. 
+%Before joining the PLUME team,
+Doumane has defended her PhD at University Paris Diderot,
+under the Supervision of Pierre-Louis Curien, David
+Baelde and Alexis Saurin.
+
+
+The main thematic axis of Doumane's research is proof theory and its relations with computer science. More precisely, she is interested in the proof theory of logics with fixed points and its applications to programming languages and verification. Her work on the normalization of circular proofs \cite{baelde16csl} lays the theoretical foundations to develop typed programming languages based on circular proofs. She also gave a new constructive proof of completeness for the linear-time mu-calculus \cite{doumane16lics, doumane17lics}. The underlying  algorithm to this proof can be implemented to produce certificates supporting the decision of model-checkers. This last result won the Kleene award for the best student paper at LICS 2017. 
+
+During her postdoctorate with Damien Pous, she developped proof systems for Kleene algebras with new operators, solving in particular the problem of axiomatizing (unit free) Kleene algebras with intersection.
+
+She is the recipient of Ackermann award 2017, Gilles-Kahn prize 2017 (awarding the best Phd computer-science thesis  in France) and "La recherche" magazine prize. 
+\paragraph{Relevant previous work.}
+The investigators have contributed significantly to \ldots
+
+\paragraph{Host organisation.}
+The UCL Dept.\ of Computer Science is well known as a leading centre for computer science research in the UK, and was ranked first place of 89 universities for Computer Science in the 2014 REF. The PPLV group, headed by Prof.\ David Pym, consists of six full-time faculty members --- Pym, Brotherston, professors Alexandra Silva and Robin Hirsch, and lecturers Ilya Sergey and Fabio Zanasi --- plus a substantial number of postdocs, PhD students and part-time faculty. The group enjoys close links with Facebook (through Peter O'Hearn, part-time professor and Engineering Manager at Facebook) and Amazon (through Byron Cook, part-time professor and Head of AWS Security Automated Reasoning Group at Amazon) as well as the recently founded Turing Institute (through David Pym, ATI University Liaison Director for UCL) and numerous collaborative links with researchers at other universities.
+
+\begingroup
+\footnotesize
+\bibliographystyletrack{alpha}
+\bibliographytrack{track}
+\endgroup
+
+%\newpage
+
+%\input{2-PreviousResearch}
+
+\newpage
+
+\section{Proposed Research and its Context}
+
+\subsection{Proposition of a high level view of the project}
+
+\begin{itemize}
+\item Logic has been succesfully applied in many domains of computer science. In particular in the domains of \textbf{verification} and \textbf{programming laguages}:
+  \begin{itemize}
+  \item In verification: formulas-as-specifications, proofs-as-certificates. 
+    \item In programming languages: formulas-as-types, proofs-as-programs
+    \end{itemize}
+\item Fixed points logics are crucial in both verification and programming languages:
+  \begin{itemize}
+  \item In verification: we can express a wide range of properties using fixed points.
+   \item In PL: program with (co-)inductive data types 
+  \end{itemize}
+\item Two main families of proof systems for logics with fixed points
+  \begin{itemize}
+  \item Finite proofs with explicite (co-)induction rules. Widely used but with many drawbacks.
+  \item Circular proofs. Not very well-explored yet very promising.
+  \end{itemize}
+\item \textbf{Our goal} is to develop:
+  \begin{itemize}
+  \item Theorem provers (allowing certificate production)
+  \item Typed programming languages 
+  \end{itemize}
+  based on circular proofs.
+\end{itemize}
+
+\subsection{Background}
+
+Good methods for reasoning with general inductive predicates have the potential to greatly boost the automation and coverage of such automatic verification tools.
+
+
+However, the difficulty in reasoning with general inductive definitions --- a fundamental activity in both mathematics and computer science --- is well known, perhaps even notorious. Automating the process of mathematical reasoning using induction and recursion principles, generally known as \emph{inductive theorem proving}, has been a topic of active interest in computer science and AI research since at least the late 1970s, with the development of specialised theorem provers such as \textsc{NqThm}~\cite{Boyer-Moore:79}.
+Since its inception, the default approach to automated inductive theorem proving has been \emph{explicit induction}: the direct application of proof rules or axioms capturing valid induction principles for the structures under consideration.  The best known explicit-induction provers in the last 20 years include ACL2~\cite{Kaufmann-Monolios-Moore:00}, \textsc{Inka}~\cite{Autexier-etal:99} and \textsc{Oyster-Clam}~\cite{Bundy-etal:90}, alongside more recent examples such as IsaPlanner~\cite{Dixon:PhD} and Zeno~\cite{Sonnex-etal:12}.  However, reasoning using explicit induction rules is known to be extremely difficult (for an overview see~\cite{Bundy:01}).  One of the biggest problems is that in an explicit induction proof, the structure(s) over which induction is to take place, the form of the induction schema and the induction hypotheses must all be chosen at the \emph{beginning} of the proof, before it is apparent which choices are likely to be fruitful.
+
+An alternative to proof by explicit induction is provided by instead working in the \emph{infinite descent} style as proposed formally by Fermat~\cite{Mahoney:94} in which, roughly speaking, the use of explicit induction is eschewed in favour of a combination of simple \emph{case analysis} and a post-facto search for justification of the use of hypotheses by finding well-founded orderings.  Wirth~\cite{Wirth:Tech06} describes an imagined mathematician working in this way as follows:
+\begin{quote}
+{\em He starts with the conjecture and simplifies it by case analysis. When he realizes
+that the current goal becomes similar to an instance of the conjecture, he applies
+the instantiated conjecture just like a lemma, but keeps in mind that he has actually
+applied an induction hypothesis. Finally, he searches for some well-founded ordering
+in which all the instances of the conjecture he has applied as induction hypotheses
+are smaller than the original conjecture.}%\flushright (Wirth~\cite{Wirth:Tech06})
+\end{quote}
+This approach has the advantage for proof search that the crucial choices of induction structures, schema and hypotheses are \emph{delayed until as late as possible in the proof}.
+
+
+
+\emph{Cyclic proof systems} essentially formalise this concept: they drop explicit induction rules in favour of much simpler case analysis rules, but compensate by allowing for more complexity in the proof structure.  Specifically, a cyclic proof is a derivation tree whose leaves may be ``back-linked'' to another matching node in the proof (see Figure~\ref{fig:std_vs_cyclic_proof}), subject to a (decidable) global soundness condition ensuring that all infinite paths in this structure correspond to sound arguments by infinite descent.
+
+%% JB NOTE: The following diagram is drawn using "prooftree", which is unfortunately not compatible with "ebproofs".
+
+%\begin{figure*}[ht]
+%\hspace{1.5cm}
+%\begin{tabular}{cc}
+%\begin{picture}(60,40)(0,0)
+%{\small
+%  \gasset{Nframe=n,Nadjust=wh,Nmr=0}
+%  \node(root)(22,0){$\bullet$}
+%  \node(inference)(30,13){$\begin{prooftree}\bullet \phantom{w} \bullet\, \cdots  \,\bullet \justifies \bullet \using \mbox{(Inference)}\end{prooftree}$}
+%  \node(axiom1)(7,26){$\begin{prooftree}\justifies \phantom{w}\bullet\phantom{w} \using \mbox{(Axiom)}\end{prooftree}$}
+%  \node(axiom2)(26.5,35){$\begin{prooftree}\justifies \phantom{w}\bullet\phantom{w} \using \mbox{(Axiom)}\end{prooftree}$}
+%  \node(axiom3)(43,26){$\begin{prooftree}\justifies \phantom{w}\bullet\phantom{w}\using \mbox{(Axiom)}\end{prooftree}$}
+%
+%
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,exo=-8.2](root,inference){}
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,sxo=-8,exo=-12](inference,axiom1){}
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,sxo=-9.6,exo=-6.5](inference,axiom2){}
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,sxo=-4,exo=-6](inference,axiom3){}
+%}
+%\end{picture}
+%&\hspace{0.8cm}
+%\begin{picture}(60,40)(0,0)
+%{\small
+%  \gasset{Nframe=n,Nadjust=wh,Nmr=0}
+%  \node(root)(22,0){$\bullet$}
+%  \node(inference)(30,13){$\begin{prooftree}\bullet \phantom{w} \bullet\, \cdots  \,\bullet \justifies \bullet \using \mbox{(Inference)}\end{prooftree}$}
+%  \node(axiom1)(6,26){$\begin{prooftree}\justifies \phantom{w}\bullet\phantom{w} \using \mbox{(Axiom)}\end{prooftree}$}
+%  \node(bud1)(20,35){$\bullet$}
+%  \node(bud2)(45,26){$\bullet$}
+%
+%
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,exo=-8.2](root,inference){}
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,sxo=-8,exo=-12](inference,axiom1){}
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,sxo=-9.6,exo=0](inference,bud1){}
+%  \drawedge[dash={0.3 0.8}0,AHnb=0,sxo=-4,exo=0](inference,bud2){}
+%  \drawedge[curvedepth=10,exo=-7](bud1,inference){}
+%  \drawedge[curvedepth=16](bud2,root){}
+%}
+%\end{picture}
+%\end{tabular}
+%\caption{\small Left: a typical proof structured as a finite tree, with the parent-child relation between nodes ($\bullet$) given by a set of inference rules. Right: a typical \emph{cyclic pre-proof}, structured as a tree proof with ``back-links'' between nodes (shown as arrows).\label{fig:std_vs_cyclic_proof}}%\vspace{-0.5cm}
+%\end{figure*}
+
+Cyclic proof systems seem to have first arisen in computer science as tableaux for the propositional modal $\mu$-calculus~\cite{Stirling-Walker:91}.  Since then, cyclic proof systems have been proposed for a number of applications, including: first-order $\mu$-calculus~\cite{Dam-Gurov:02};
+%Sprenger-Dam:03}
+verifying properties of concurrent processes~\cite{Schopp-Simpson:02}; first-order logic with inductive definitions~\cite{Bro05}, bunched logic~\cite{Brotherston:07}; and termination of pointer programs~\cite{BBC08}.  For some time, the development of these formal proof systems was not matched by the development of automated tools implementing them, most likely owing to the technical difficulties of dealing with cyclic proof structures subject to a global soundness condition.  However, in the last few years a small number of tools based on cyclic proof have appeared, including the interactive \textsc{QuodLibet} prover~\cite{Wirth-etal:03}, and provers geared to limited fragments of separation logic~\cite{Nguyen-Chin:08,Brotherston-Distefano-Petersen:11}. Most recently, a prototype theorem prover, $\cyclist$, has been developed that implements both the generic notion of cyclic proof due to Brotherston and its instantiation to many of the aforementioned concrete settings, including the abduction of inductive predicates for program termination~\cite{BGP12,BG12}.  This prover exhibits promising automated performance on examples that ordinarily require complicated induction schemes, which are problematic for traditional explicit-induction theorem provers.
+
+\input{3-ProposedResearch}
+
+
+\begingroup
+\footnotesize
+\bibliographystylebiblio{abbrv}
+\bibliographybiblio{biblio}
+\endgroup
+
+\end{document}
+
